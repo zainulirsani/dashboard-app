@@ -1,0 +1,20 @@
+<svg width="128" height="128" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Lingkaran Kepala -->
+  <circle cx="32" cy="20" r="12" fill="#FF3D3D" />
+  <!-- Tubuh -->
+  <path
+    d="M16 36C16 30.4772 20.4772 26 26 26H38C43.5228 26 48 30.4772 48 36V48C48 51.866 44.866 55 41 55H23C19.134 55 16 51.866 16 48V36Z"
+    fill="#FF3D3D"
+  />
+  <!-- Mata Kiri -->
+  <circle cx="28" cy="18" r="1.5" fill="white" />
+  <!-- Mata Kanan -->
+  <circle cx="36" cy="18" r="1.5" fill="white" />
+  <!-- Mulut -->
+  <path
+    d="M28 23C29 24 31 25 36 23"
+    stroke="white"
+    stroke-width="2"
+    stroke-linecap="round"
+  />
+</svg>

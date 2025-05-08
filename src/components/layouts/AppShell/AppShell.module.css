@@ -1,0 +1,66 @@
+.appShell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR (Desktop) */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: #f8f9fc;
+  color: #333;
+  padding-bottom: 48px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+  z-index: 1045;
+  transform: translateX(0); /* default tampil */
+}
+
+/* Sidebar disembunyikan */
+.sidebar.hide {
+  transform: translateX(-100%);
+}
+
+/* Sidebar tampil */
+.sidebar.show {
+  transform: translateX(0);
+}
+
+/* RESPONSIVE UNTUK TABLET & MOBILE */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 80%; /* Bisa diganti 100% jika ingin fullscreen */
+  }
+}
+
+/* KONTEN UTAMA */
+.content {
+  flex-grow: 1;
+  margin-left: 240px;
+  transition: margin-left 0.3s ease;
+  width: 100%;
+}
+
+/* Jika sidebar tidak aktif, konten penuh */
+.contentActive {
+  margin-left: 0;
+}
+
+/* KONTEN DALAM (PADDING DALAM KONTEN) */
+.mainContent {
+  padding: 24px;
+}
+
+/* RESPONSIVE KONTEN */
+@media (max-width: 1024px) {
+  .content {
+    margin-left: 0;
+  }
+
+  .mainContent {
+    padding: 16px;
+  }
+}

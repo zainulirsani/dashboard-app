@@ -1,0 +1,89 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26px;
+
+  &__h3 {
+    margin: 0;
+    color: #800020;
+    font-weight: 800;
+    line-height: 42px;
+    flex-grow: 1;
+  }
+  &__p {
+    color: #828ea5;
+  }
+}
+.search {
+  width: 100%;
+  max-width: 230px;
+  height: 40px;
+  border: none;
+  font-size: 14px;
+  padding: 0 20px;
+  color: #828ea5;
+  border-radius: 100px;
+  background-color: #efeff9;
+  box-sizing: border-box;
+}
+.largeCard {
+  width: 300px;
+  height: 120px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #8b0000, #b22222);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  color: #000000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  padding: 10px;
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    gap: 20px;
+
+    &__leftSection {
+      flex: 1;
+      font-size: clamp(2rem, 6vw, 5rem); // Responsive font
+      font-weight: 800;
+      color: #ffdf6b;
+      text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+      text-align: left;
+
+
+      &__number {
+        margin-top: 4px;
+        font-size: clamp(2rem, 4vw, 1rem);
+        font-weight: 700;
+      }
+    }
+
+    &__rightSection {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      flex-basis: 30%;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      color: #e6e8f0;
+      animation: bounce 1.5s infinite;
+    }
+  }
+
+  &__description {
+    margin-top: 6px;
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
+    font-weight: bold;
+    color: #d7d7d9;
+    text-align: center;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.3),
+      -6px -6px 15px rgba(255, 255, 255, 0.3);
+  }
+}
+

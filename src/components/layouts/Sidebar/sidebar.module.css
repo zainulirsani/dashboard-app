@@ -1,0 +1,147 @@
+.sidebar {
+  color: #333;
+  position: fixed;
+  min-width: 240px;
+  height: 100vh;
+  background: #f8f9fc;
+  transition: all 0.4s ease;
+  padding-bottom: 48px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  z-index: 1045;
+}
+.sidebar .btn-close-wrapper {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1100;
+  display: none;
+}
+.sidebar.active {
+  margin-left: -240px;
+}
+
+.offcanvasMd.offcanvasStart.show {
+  width: 300px;
+}
+
+/* MENU SECTION */
+.menu > p {
+  color: #6c757d;
+  font-size: 13px;
+  padding-left: 40px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.itemMenu {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: #6c757d;
+  font-weight: 500;
+  padding: 12px 40px;
+  position: relative;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.itemMenu:hover,
+.itemMenu.active {
+  color: #3547ac;
+  background-color: #e9ecf3;
+  font-weight: 600;
+  border-left: 4px solid #3547ac;
+}
+
+.itemMenu.active::before {
+  display: none; /* Gunakan border-left saja */
+}
+
+/* ICON STYLE */
+.icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* SWEETALERT BUTTON */
+.swalConfirm {
+  background-color: #F80000;
+  color: white;
+  border: none;
+}
+
+/* ICON STATES */
+.icStats { background-image: url('/images/ic_overview_inact.svg'); }
+.itemMenu.active .icStats, .itemMenu:hover .icStats {
+  background-image: url('/images/ic_overview_act.svg');
+}
+
+.icTrans { background-image: url('/images/ic_transaction_inact.svg'); }
+.itemMenu.active .icTrans, .itemMenu:hover .icTrans {
+  background-image: url('/images/ic_transaction_act.svg');
+}
+
+.icPerson { background-image: url('/images/ic_person_inact.svg'); }
+.itemMenu.active .icPerson, .itemMenu:hover .icPerson {
+  background-image: url('/images/ic_person_act.svg');
+}
+
+.icMsg { background-image: url('/images/ic_messages_inact.svg'); }
+.itemMenu.active .icMsg, .itemMenu:hover .icMsg {
+  background-image: url('/images/ic_messages_act.svg');
+}
+
+.icAccount { background-image: url('/images/ic_account_inact.svg'); }
+.itemMenu.active .icAccount, .itemMenu:hover .icAccount {
+  background-image: url('/images/ic_account_act.svg');
+}
+
+.icSettings { background-image: url('/images/ic_settings_inact.svg'); }
+.itemMenu.active .icSettings, .itemMenu:hover .icSettings {
+  background-image: url('/images/ic_settings_act.svg');
+}
+
+.icHelp { background-image: url('/images/ic_help_inact.svg'); }
+.itemMenu.active .icHelp, .itemMenu:hover .icHelp {
+  background-image: url('/images/ic_help_act.svg');
+}
+
+.icLogout { background-image: url('/images/ic_logout_inact.svg'); }
+.itemMenu.active .icLogout, .itemMenu:hover .icLogout {
+  background-image: url('/images/ic_logout_act.svg');
+}
+
+/* RESPONSIVE */
+@media (max-width: 991.98px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;         /* Menutupi seluruh lebar layar */
+    height: 100vh;       /* Menutupi seluruh tinggi layar */
+    background-color: #f8f9fc;
+    z-index: 1050;
+    margin-left: -100%;  /* Tertutup default */
+    transition: all 0.3s ease-in-out;
+  }
+  .sidebar .btn-close-wrapper {
+    display: block;
+  }
+  .sidebar.active {
+    margin-left: 0;      /* Muncul saat tombol menu diklik */
+  }
+
+  .offcanvasMd.offcanvasStart.show {
+    width: 100%;         /* Offcanvas juga ikut full */
+  }
+}
+
+
+

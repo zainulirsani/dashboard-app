@@ -1,0 +1,220 @@
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 26px;
+
+    &__h3 {
+      margin: 0;
+      color: #800020;
+      font-weight: 800;
+      line-height: 42px;
+      flex-grow: 1;
+    }
+    &__p {
+      color: #828ea5;
+    }
+  }
+  .card {
+    margin-top: 40px;
+    border: none;
+    border-radius: 10px;
+    box-sizing: border-box;
+    position: relative;
+    background-color: #cacaca;
+    &__cardHeader {
+      border-radius: 12px 12px 0 0;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+      background: linear-gradient(
+        135deg,
+        #8b0000,
+        #b22222
+      );
+    }
+  }
+  .mediumCard {
+    width: 180px;
+    height: 110px;
+    border-radius: 30px;
+    background: linear-gradient(
+      135deg,
+      #8b0000,
+      #b22222
+    ); /* Gradien merah elegan */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Bayangan lembut */
+    color: #fff; /* Teks putih untuk kontras */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animasi hover */
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between; /* Untuk memastikan konten tersebar */
+    align-items: center; /* Vertikal center untuk konten */
+    padding: 10px;
+    &__cardContent {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 15px;
+      &__leftSection {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-basis: 70%;
+        &__number {
+          font-size: 2.5rem; /* Ukuran angka besar */
+          font-weight: bold;
+          margin: 0;
+          color: #ffdf6b; /* Warna mencolok untuk angka */
+          text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+      }
+
+      &__rightSection {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+        flex-basis: 30%;
+        &__icon {
+          font-size: 2.5rem; /* Ukuran ikon */
+          color: #e6e8f0; /* Warna ikon agar selaras */
+          animation: bounce 1.5s infinite;
+        }
+      }
+    }
+    &__description {
+      font-size: 16px;
+      font-weight: bold;
+      color: #aaaaab;
+    }
+    &:hover {
+      transform: translateY(-10px); /* Efek hover untuk mengangkat card */
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.12); /* Bayangan lebih intens */
+    }
+  }
+  
+  /* ====== RESPONSIVE ====== */
+  @media (min-width: 834px) and (max-width: 900px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+
+      &__h3 {
+        font-size: 1.1rem;
+      }
+
+      &__p {
+        font-size: 0.9rem;
+      }
+    }
+
+    .mediumCard {
+      width: 40%;
+      height: auto;
+      padding: 10px;
+
+      &__cardContent {
+        flex-direction: row; // tetap horizontal
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+
+        &__leftSection {
+          flex-basis: 70%;
+          &__number {
+            font-size: 2rem;
+          }
+        }
+
+        &__rightSection {
+          flex-basis: 30%;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+
+          &__icon {
+            font-size: 2rem;
+          }
+        }
+      }
+
+      &__description {
+        font-size: 14px;
+        margin-top: 2px;
+      }
+    }
+
+    .card {
+      margin-top: 20px;
+
+      &__cardHeader {
+        font-size: 0.9rem;
+        text-align: center;
+      }
+    }
+  }
+  /* Handphone (≤480px) */
+  @media (max-width: 480px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+
+      &__h3 {
+        font-size: 1.1rem;
+      }
+
+      &__p {
+        font-size: 0.9rem;
+      }
+    }
+
+    .mediumCard {
+      width: 40%;
+      height: auto;
+      padding: 10px;
+
+      &__cardContent {
+        flex-direction: row; // tetap horizontal
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+
+        &__leftSection {
+          flex-basis: 70%;
+          &__number {
+            font-size: 2rem;
+          }
+        }
+
+        &__rightSection {
+          flex-basis: 30%;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+
+          &__icon {
+            font-size: 2rem;
+          }
+        }
+      }
+
+      &__description {
+        font-size: 14px;
+        margin-top: 2px;
+      }
+    }
+
+    .card {
+      margin-top: 20px;
+
+      &__cardHeader {
+        font-size: 0.9rem;
+        text-align: center;
+      }
+    }
+  }
+

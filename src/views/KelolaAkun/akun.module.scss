@@ -1,0 +1,58 @@
+
+.cardCustom {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    transition: transform 0.3s ease-in-out;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+    }
+}
+
+.profilePic {
+    border: 2.5px solid #8b0000;
+    transition: transform 0.3s ease-in-out;
+    width: 150px;
+    height: 150px;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+}
+
+.listItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+
+    strong {
+        min-width: 120px; // Sesuaikan agar titik dua sejajar
+        display: inline-block;
+        text-align: left;
+    }
+
+    span {
+        flex-grow: 1; // Agar teks menyesuaikan lebar
+        text-align: left;
+    }
+}
+
+
+.btnCustom {
+    background: #6a11cb;
+    border: none;
+    font-size: 1rem;
+    padding: 10px 15px;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+
+    &:hover {
+        background: #4a0f9c;
+        transform: scale(1.05);
+    }
+}

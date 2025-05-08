@@ -1,0 +1,207 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+
+  &__h3 {
+    margin: 0;
+    color: #800020;
+    font-weight: 800;
+    line-height: 42px;
+    flex-grow: 1;
+    font-size: 24px;
+  }
+
+  &__p {
+    color: #828ea5;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+}
+.search {
+  width: 100%;
+  max-width: 230px;
+  height: 40px;
+  border: none;
+  font-size: 14px;
+  padding: 0 20px;
+  color: #828ea5;
+  border-radius: 100px;
+  background-color: #efeff9;
+  box-sizing: border-box;
+}
+.customCard {
+  width: 180px;
+  max-width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  justify-content: space-between;
+  padding: 12px;
+  margin: 10px;
+  border-radius: 8px;
+
+  &__title {
+    margin-top: 5px;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  &__value {
+    margin-bottom: 10px;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.statCard {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  &__header {
+    background: #8b0000;
+    color: #fff;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+
+    &__title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+  }
+
+  &__chartContainer {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 15px;
+  }
+
+  &__statistic {
+    height: 90px;
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .bg-orange {
+    background-color: #fd7e14 !important;
+  }
+}
+
+/* Wrapper khusus untuk datatable agar bisa digeser */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Atur tabel agar bisa menyesuaikan scroll */
+#dataTable {
+  width: 100%;
+  min-width: 800px; // Atur sesuai kebutuhan
+}
+
+// =============================
+// Media Queries untuk Responsif
+// =============================
+@media (max-width: 991.98px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    &__h3 {
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    &__p {
+      font-size: 13px;
+    }
+  }
+
+  .customCard {
+    width: 38%;
+    max-width: 38%;
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .statCard {
+    &__chartContainer {
+      padding: 10px;
+    }
+
+    &__statistic {
+      font-size: 14px;
+      height: auto;
+      padding: 8px;
+    }
+  }
+}
+
+@media (max-width: 479.9px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    &__h3 {
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    &__p {
+      font-size: 13px;
+    }
+  }
+
+  .customCard {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .statCard {
+    &__chartContainer {
+      padding: 10px;
+    }
+
+    &__statistic {
+      font-size: 14px;
+      height: auto;
+      padding: 8px;
+    }
+  }
+}

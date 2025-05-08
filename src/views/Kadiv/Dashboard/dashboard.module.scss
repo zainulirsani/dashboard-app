@@ -1,0 +1,198 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26px;
+
+  &__h3 {
+    margin: 0;
+    color: #800020;
+    font-weight: 800;
+    line-height: 42px;
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.5rem;
+  }
+
+  &__p {
+    color: #828ea5;
+    font-size: 0.9rem;
+  }
+}
+
+.search {
+  width: 300px;
+  height: 40px;
+  border: none;
+  font-size: 14px;
+  padding: 0 20px;
+  color: #828ea5;
+  border-radius: 100px;
+  box-sizing: border-box;
+  background-color: #f8f9fd;
+  margin-left: 20px;
+}
+
+.btnSearch {
+  right: 80px;
+  width: 40px;
+  height: 40px;
+  color: #000000;
+  border-radius: 50px;
+  background-color: #dce2f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.card {
+  position: relative;
+  text-align: center;
+  height: 210px;
+  background-color: #e3dddddc;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  &__header {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 650;
+    margin-top: 10px;
+    text-align: center;
+    color: #5e2129;
+  }
+
+  &__img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 10px auto;
+  }
+
+  &__btn {
+    display: inline-block;
+    margin: 20px auto;
+    padding: 4px 12px;
+    border: 1px solid rgba(0, 123, 255, 0.5);
+    background-color: rgba(53, 71, 172, 1);
+    color: #fff;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background-color: rgba(0, 123, 255, 0.2);
+      color: #0056b3;
+      border-color: rgba(0, 123, 255, 0.8);
+    }
+  }
+}
+
+/* MEDIA QUERIES UNTUK RESPONSIVE DESIGN */
+@media (max-width: 834px) and (min-width: 481px){
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header__h3 {
+    font-size: 1.2rem;
+    text-align: left;
+  }
+
+  .search {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .btnSearch {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .card {
+    width: 22%; /* hampir 50%, sisakan sedikit ruang antar kolom */
+    padding: 15px;
+    height: auto;
+    box-sizing: border-box;
+    margin-bottom: 16px; /* Jarak antar card */
+  }
+
+  .card__title {
+    font-size: 1rem;
+  }
+
+  .card__img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .card__btn {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header__h3 {
+    font-size: 1.2rem;
+    text-align: left;
+  }
+
+  .search {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .btnSearch {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .card {
+    width: 45%; /* Lebar penuh */
+    padding: 15px;
+    height: auto;
+    box-sizing: border-box;
+    margin-bottom: 16px; /* Jarak antar card */
+  }
+
+  .card__title {
+    font-size: 1rem;
+  }
+
+  .card__img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .card__btn {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+}
+
