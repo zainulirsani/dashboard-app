@@ -1,5 +1,5 @@
 import styles from "./users.module.scss";
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -13,7 +13,14 @@ import { PerusahaanType } from "@/types/Perusahaan.type";
 import router from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
-
+interface UserFormData {
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: string;
+  devisi?: string | number[];
+}
+type FormDataKey = keyof UserFormData;
 const UserView = ({ users, devisis }: { users: UserType[], devisis: PerusahaanType[] }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
@@ -43,6 +50,7 @@ const UserView = ({ users, devisis }: { users: UserType[], devisis: PerusahaanTy
             Swal.fire("Gagal!", "Terjadi kesalahan saat menghapus data.", "error");
           }
         } catch (error) {
+          console.error("Terjadi kesalahan:", error);
           Swal.fire("Gagal!", "Terjadi kesalahan pada jaringan.", "error");
         }
       }
@@ -55,12 +63,21 @@ const UserView = ({ users, devisis }: { users: UserType[], devisis: PerusahaanTy
     );
   }, [users, searchTerm]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, formData: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, formData: UserFormData) => {
     event.preventDefault();
     const formDataToSend = new FormData();
     Object.keys(formData).forEach((key) => {
-      formDataToSend.append(key, formData[key]);
+      const typedKey = key as FormDataKey;
+      const value = formData[typedKey];
+    
+      // Mengonversi array menjadi string yang dipisahkan koma jika diperlukan
+      if (Array.isArray(value)) {
+        formDataToSend.append(typedKey, value.join(','));
+      } else {
+        formDataToSend.append(typedKey, value ?? ''); // Menangani nilai undefined atau null
+      }
     });
+    
 
     const isUpdate = !!selectedUser;
     const apiUrl = isUpdate
@@ -96,6 +113,7 @@ const UserView = ({ users, devisis }: { users: UserType[], devisis: PerusahaanTy
         });
       }
     } catch (error) {
+      console.log("Terjadi kesalahan:", error);
       Swal.fire("Gagal!", "Terjadi kesalahan pada jaringan.", "error");
     }
   };

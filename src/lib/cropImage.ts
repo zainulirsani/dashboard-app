@@ -1,5 +1,10 @@
-// src/utils/cropImage.ts
-export default function getCroppedImg(imageSrc: string, pixelCrop: any): Promise<Blob> {
+interface PixelCrop {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+export default function getCroppedImg(imageSrc: string, pixelCrop: PixelCrop): Promise<Blob> {
     return new Promise((resolve, reject) => {
       const image = new Image();
       image.src = imageSrc;

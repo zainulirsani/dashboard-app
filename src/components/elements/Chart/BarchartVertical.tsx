@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import * as d3 from "d3"; // pastikan d3 terinstall via npm i d3
+import * as d3 from "d3";
 
 interface Props {
   data: {

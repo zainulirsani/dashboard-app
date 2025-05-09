@@ -1,54 +1,63 @@
-import React, { useEffect, useRef } from "react";
-import $ from "jquery";
-import "daterangepicker";
-import "daterangepicker/daterangepicker.css";
+import React, { useState } from "react";
+import { DateRange } from "react-date-range"; // ✅ perbaikan di sini
+import { format } from "date-fns";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+
+interface RangeSelection {
+  selection: {
+    startDate: Date;
+    endDate: Date;
+    key: string;
+  };
+}
 
 interface Props {
   onDateChange: (range: { startDate: string; endDate: string }) => void;
+  onDone?: () => void;
 }
 
-const DateRangeInput: React.FC<Props> = ({ onDateChange }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+const DateRangeInput: React.FC<Props> = ({ onDateChange, onDone }) => {
+  const [range, setRange] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
 
-  useEffect(() => {
-    if (!inputRef.current) return;
+  const handleChange = (ranges: RangeSelection) => {
+    const selectedRange = ranges.selection;
+    setRange([selectedRange]);
 
-    const $input = $(inputRef.current);
+    // Gunakan format dari date-fns untuk menghindari pergeseran waktu
+    const startDateStr = selectedRange.startDate
+      ? format(selectedRange.startDate, "yyyy-MM-dd")
+      : "";
+    const endDateStr = selectedRange.endDate
+      ? format(selectedRange.endDate, "yyyy-MM-dd")
+      : "";
 
-    $input.daterangepicker(
-      {
-        autoUpdateInput: false,
-        locale: {
-          cancelLabel: "Clear",
-        },
-      },
-    );
+    onDateChange({ startDate: startDateStr, endDate: endDateStr });
 
-    $input.on("apply.daterangepicker", (ev: any, picker: any) => {
-      const start = picker.startDate.format("YYYY-MM-DD");
-      const end = picker.endDate.format("YYYY-MM-DD");
-
-      $input.val(picker.startDate.format("MM/DD/YYYY") + " - " + picker.endDate.format("MM/DD/YYYY"));
-      onDateChange({ startDate: start, endDate: end });
-    });
-
-    $input.on("cancel.daterangepicker", () => {
-      $input.val("");
-      onDateChange({ startDate: "", endDate: "" });
-    });
-
-    return () => {
-      $input.data("daterangepicker")?.remove();
-    };
-  }, [onDateChange]);
+    if (
+      onDone &&
+      selectedRange.startDate &&
+      selectedRange.endDate &&
+      selectedRange.startDate.getTime() !== selectedRange.endDate.getTime()
+    ) {
+      onDone();
+    }
+  };
 
   return (
-    <input
-      type="text"
-      name="datefilter"
-      className="form-control"
-      placeholder="Pilih Rentang Tanggal"
-      ref={inputRef}
+    <DateRange
+      editableDateInputs={true}
+      onChange={handleChange}
+      moveRangeOnFirstSelection={false}
+      ranges={range}
+      maxDate={new Date()}
+      rangeColors={["#0d6efd"]}
     />
   );
 };

@@ -10,6 +10,7 @@ import {
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
+import { TooltipItem } from 'chart.js';
 
 ChartJS.register(
   CategoryScale,
@@ -75,7 +76,7 @@ const Barchart: React.FC<Props> = ({
           color: '#4B5563',
           font: {
             size: 14,
-            weight: 'bold' as 'bold',
+            weight: 'bold' as const,
           },
         },
       },
@@ -86,7 +87,7 @@ const Barchart: React.FC<Props> = ({
         align: 'center' as const,
         font: {
           size: 12,
-          weight: 'bold' as 'bold',
+          weight: 'bold' as const,
         },
         formatter: (value: number) => {
           return valueType === 'currency' ? formatShortCurrency(value) : value.toLocaleString('id-ID');
@@ -97,7 +98,7 @@ const Barchart: React.FC<Props> = ({
         titleColor: '#FFFFFF',
         bodyColor: '#F9FAFB',
         callbacks: {
-          label: (context: any) => {
+          label: (context: TooltipItem<'bar'>) => {
             const val = context.parsed.y;
             return valueType === 'currency' ? formatValue(val) : val.toLocaleString('id-ID');
           },
@@ -123,7 +124,7 @@ const Barchart: React.FC<Props> = ({
           color: '#374151',
           font: {
             size: 14,
-            weight: 'bold' as 'bold',
+            weight: 'bold' as const,
           },
         },
       },
@@ -140,7 +141,7 @@ const Barchart: React.FC<Props> = ({
           color: '#374151',
           font: {
             size: 14,
-            weight: 'bold' as 'bold',
+            weight: 'bold' as const,
           },
         },
       },

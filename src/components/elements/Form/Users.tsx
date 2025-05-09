@@ -1,19 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 
-interface UserFormModalProps {
+interface UserFormData {
+    name?: string;
+    email?: string;
+    password?: string;
+    role?: string;
+    devisi?: string | number[];
+  }
+  
+  interface UserFormModalProps {
     showModal: boolean;
     handleCloseModal: () => void;
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>, formData: any) => void;
-    selectedUser: {
-        name?: string;
-        email?: string;
-        password?: string;
-        role?: string;
-        devisi?: string | number[];
-    } | null;
+    handleSubmit: (event: React.FormEvent<HTMLFormElement>, formData: UserFormData) => void;
+    selectedUser: UserFormData | null;
     devisis: { id: number; nama_perusahaan: string }[];
-}
-
+  }
+  
 const UserFormModal = ({ showModal, handleCloseModal, handleSubmit, selectedUser, devisis }: UserFormModalProps) => {
     const [formData, setFormData] = useState({
         name: "",

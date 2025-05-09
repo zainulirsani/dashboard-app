@@ -8,19 +8,20 @@ type AkunFormModalProps = {
     showModal: boolean;
     handleCloseModal: () => void;
     handleSubmit: (formData: {
-      name: string;
-      email: string;
-      password: string;
-      profilePic: File | null;
+        name: string;
+        email: string;
+        password: string;
+        profilePic: File | null;
     }) => void;
     defaultValue: {
-      name: string;
-      email: string;
-      password: string;
-      profilePic: File | null;
+        name: string;
+        email: string;
+        password: string;
+        profilePic: File | null;
     };
-  };
-  
+};
+
+import { Area } from 'react-easy-crop';
 
 const AkunFormModal: React.FC<AkunFormModalProps> = ({
     showModal,
@@ -36,7 +37,7 @@ const AkunFormModal: React.FC<AkunFormModalProps> = ({
     });
 
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [cropping, setCropping] = useState(false);
@@ -57,7 +58,7 @@ const AkunFormModal: React.FC<AkunFormModalProps> = ({
         setFormData((prev) => ({ ...prev, [id]: value }));
     };
 
-    const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+    const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
         setCroppedAreaPixels(croppedAreaPixels);
     };
 

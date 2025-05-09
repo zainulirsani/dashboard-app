@@ -29,47 +29,66 @@ const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          // Menampilkan loading atau indikasi penghapusan
+          Swal.fire({
+            title: 'Menghapus...',
+            text: 'Sedang menghapus data...',
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+      
           const response = await fetch(`http://127.0.0.1:8000/api/perusahaan/delete/${id}`, {
             method: "DELETE",
           });
-
+      
           if (response.ok) {
+            // Menghapus data dari state setelah berhasil dihapus
             setPerusahaanList((prev) => prev.filter((p) => p.id !== id));
             Swal.fire("Terhapus!", "Data telah berhasil dihapus.", "success");
           } else {
-            Swal.fire("Gagal!", "Terjadi kesalahan saat menghapus data.", "error");
+            const errorData = await response.json(); // Menangkap response error jika ada
+            Swal.fire("Gagal!", errorData?.message || "Terjadi kesalahan saat menghapus data.", "error");
           }
-        } catch (error) {
-          Swal.fire("Gagal!", "Terjadi kesalahan pada jaringan.", "error");
+        } catch (error: unknown) {
+          // Menangani error dengan memastikan error adalah instance dari Error
+          if (error instanceof Error) {
+            Swal.fire("Gagal!", `Terjadi kesalahan pada jaringan: ${error.message}`, "error");
+          } else {
+            // Jika bukan instance Error, tampilkan pesan umum
+            Swal.fire("Gagal!", "Terjadi kesalahan yang tidak diketahui.", "error");
+          }
         }
       }
+      
     });
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-
+  
     try {
       let url = "http://127.0.0.1:8000/api/perusahaan/create";
       let method = "POST";
-
+  
       if (selectedPerusahaan) {
         url = `http://127.0.0.1:8000/api/perusahaan/update/${selectedPerusahaan.id}`;
         formData.append("_method", "PUT"); // Laravel membutuhkan ini untuk update
+        method = "PUT"; // Gunakan method PUT saat update
       }
-
+  
       const response = await fetch(url, {
-        method: "POST", // Tetap pakai POST karena ada file dalam FormData
+        method: method, // Gunakan variabel 'method' di sini
         body: formData,
       });
-
+  
       const result = await response.json();
-
+  
       if (response.ok) {
-        setPerusahaanList((prev) => 
-          selectedPerusahaan 
-            ? prev.map((p) => (p.id === selectedPerusahaan.id ? result : p)) 
+        setPerusahaanList((prev) =>
+          selectedPerusahaan
+            ? prev.map((p) => (p.id === selectedPerusahaan.id ? result : p))
             : [...prev, result]
         );
         Swal.fire("Berhasil!", "Data perusahaan berhasil disimpan.", "success");
@@ -84,6 +103,7 @@ const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
       Swal.fire("Gagal!", "Terjadi kesalahan pada jaringan.", "error");
     }
   };
+  
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);

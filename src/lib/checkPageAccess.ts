@@ -1,5 +1,8 @@
 import { roleRoutes } from "@/config/roleRoutes";
-
+interface Perusahaan {
+  slug_perusahaan: string;
+  // Properti lain yang mungkin ada pada perusahaan_diakses
+}
 // Fungsi akses umum (untuk role selain kadiv)
 export function hasStaticAccess(role: string, path: string): boolean {
     const routes = roleRoutes[role] || [];
@@ -19,7 +22,7 @@ export async function hasKadivAccess(userId: number, path: string): Promise<bool
 
     if (!data || !data.result || !Array.isArray(data.result.perusahaan_diakses)) return false;
 
-    const allowedSlugs = data.result.perusahaan_diakses.map((p: any) => p.slug_perusahaan.toLowerCase());
+    const allowedSlugs = data.result.perusahaan_diakses.map((p: Perusahaan) => p.slug_perusahaan.toLowerCase());
 
     // Match URL seperti /DetailPerusahaan/BaliMall
     const match = path.match(/^\/DetailPerusahaan\/([^\/]+)/i);
