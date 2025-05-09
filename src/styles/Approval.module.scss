@@ -22,7 +22,7 @@
 }
 .search {
   width: 100%;
-  max-width: 300px;
+  width: 300px;
   height: 40px;
   border: none;
   font-size: 14px;
@@ -31,6 +31,7 @@
   border-radius: 100px;
   background-color: #efeff9;
   box-sizing: border-box;
+  border: #787676 solid 2px;
 }
 .datePickerWrapper {
   position: absolute;

@@ -3,14 +3,14 @@ import styles from "@/styles/Approval.module.scss";
 import LineChart from "@/components/elements/Chart/LineChart";
 import DateRangeInput from "@/components/elements/Daterange/Daterange";
 import dynamic from 'next/dynamic';
+const DataTable = dynamic(() => import('react-data-table-component'), {
+    ssr: false,
+});
 import { ApprovalData, TotalHarga, TotalApproved, TotalBelum, TotalDitolak, ApprovalItem, } from "@/types/approval.type";
 interface Props {
     data: ApprovalData;
 }
 type Status = "approved" | "pending" | "ditolak" | "belum_diapprove";
-const DataTable = dynamic(() => import('react-data-table-component'), {
-    ssr: false,
-  });
 const ApprovalView = ({ data }: Props) => {
     const statuses: Status[] = ["approved", "pending", "ditolak", "belum_diapprove"];
     const [selectedChart, setSelectedChart] = useState<'semua' | 'approved' | 'belum approve' | 'ditolak'>('semua');

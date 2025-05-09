@@ -7,6 +7,7 @@ export interface ArproType {
   result: {
     total: totalPertanggalType[];
     totalSepakat: totalSepakatType[];
+    totalTidakSepakat: tidakSepakatType[];
     totalPenawaran: totalPenawaranType[];
     totalInformasiHarga: totalInformasiHargaType[];
     totalDraft: totalDraftType[];
@@ -25,7 +26,11 @@ export interface totalSepakatType {
   jumlah_presale: number;
   nominal: number;
 }
-
+export interface tidakSepakatType { 
+  tanggal: string;
+  jumlah_presale: number;
+  nominal: number;
+}
 export interface totalPenawaranType {
   tanggal: string;
   jumlah_presale: number;
