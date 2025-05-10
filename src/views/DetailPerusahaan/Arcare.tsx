@@ -2,10 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "@/styles/arcare.module.scss";
 import DateRangeInput from "@/components/elements/Daterange/Daterange";
 import { ArcareType } from "@/types/arcare.type";
-import $ from "jquery";
-import "datatables.net-responsive-dt/css/responsive.dataTables.css";
-import "datatables.net";
-import "datatables.net-responsive";
 
 interface Props {
   data: {
@@ -53,28 +49,6 @@ const ArcareView: React.FC<Props> = ({ data }) => {
     }
   };
 
-
-  useEffect(() => {
-    if (!tableRef.current) return;
-
-    const tableElement = $(tableRef.current);
-    let dataTable: any;
-
-    if (($.fn.DataTable as any).isDataTable("#dataTable")) {
-      dataTable = tableElement.DataTable();
-      dataTable.clear().destroy();
-    }
-    
-    return () => {
-      if (dataTable) {
-        dataTable.destroy();
-      }
-    };
-  }, [filteredTickets]);
-
-  // trigger ulang datatables jika filtered berubah
-
-
   return (
     <section className="p-3">
       <header className={`${styles.header} d-flex justify-content-between`}>
@@ -103,54 +77,6 @@ const ArcareView: React.FC<Props> = ({ data }) => {
           <div className={`${styles.card__cardHeader__date} d-flex align-items-center gap-2`}>
             <DateRangeInput onDateChange={handleDateChange} />
           </div>
-        </div>
-        <div className="card-body">
-          <table ref={tableRef} className="table table-striped table-hover nowrap w-100">
-            <thead className="table-light text-center">
-              <tr>
-                <th>No</th>
-                <th>Satuan Kerja</th>
-                <th>Total Tiket</th>
-                <th>Dikerjakan</th>
-                <th>Selesai</th>
-                <th>Pending</th>
-                <th>Dibatalkan</th>
-                <th>Total Nominal</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredTickets?.map((ticket, index) => (
-                <tr key={index}>
-                  <td className="text-center">{index + 1}</td>
-                  <td>{ticket.nama_satker}</td>
-                  <td className="text-center">{ticket.total_tiket}</td>
-                  <td className="text-center">{ticket.dikerjakan}</td>
-                  <td className="text-center">{ticket.selesai}</td>
-                  <td className="text-center">{ticket.pending}</td>
-                  <td className="text-center">{ticket.dibatalkan}</td>
-                  <td className="text-end">
-                    {ticket.total_nominal
-                      ? Number(ticket.total_nominal).toLocaleString("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
-                        })
-                      : "Rp0"}
-                  </td>
-                  <td className="text-center">
-                    <button className="btn btn-sm btn-primary border-0">
-                      <i className="fas fa-info-circle me-1"></i> Detail
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {filteredTickets?.length === 0 && (
-                <tr>
-                  <td colSpan={9} className="text-center">Tidak ada data</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
         </div>
       </div>
     </section>

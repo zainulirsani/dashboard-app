@@ -1,183 +1,181 @@
-import React, { useState, useRef, useEffect } from "react";
-import * as d3 from "d3";
+import React, { CSSProperties } from "react";
+import { scaleBand, scaleLinear, max } from "d3";
 
-interface Props {
-  data: {
-    result: {
-      CSR: number;
-      KerjaPraktik: number;
-      KerjaSama: number;
-      Narasumber: number;
-      Presentasi: number;
-      Meeting: number;
-      Undangan: number;
-      Knowledge: number;
-      Tugas: number;
-      Lamaran: number;
-      Penelitian: number;
-    };
-  };
-}
-
-interface TooltipData {
-  x: number;
-  y: number;
-  label: string;
+interface DataItem {
+  key: string;
   value: number;
 }
-export function BarChartVertical({ data }: Props) {
-  const height = 350;
-  const margin = { top: 20, right: 20, bottom: 80, left: 40 };
 
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const [containerWidth, setContainerWidth] = useState<number>(0);
-  
-  // Auto detect width
-  useEffect(() => {
-    const handleResize = () => {
-      if (wrapperRef.current) {
-        setContainerWidth(wrapperRef.current.clientWidth);
-      }
-    };
+const data: DataItem[] = [
+  { key: "France", value: 38.1 },
+  { key: "Spain", value: 25.3 },
+  { key: "Italy", value: 23.1 },
+  { key: "Portugal", value: 19.5 },
+  { key: "Germany", value: 14.7 },
+  { key: "Netherlands", value: 6.1 },
+  { key: "Belgium", value: 10.8 },
+  { key: "Austria", value: 7.8 },
+  { key: "Greece", value: 6.8 },
+  { key: "Luxembourg", value: 5.5 },
+  { key: "Cyprus", value: 4.8 },
+  { key: "Malta", value: 3.5 },
+  { key: "Slovenia", value: 3.8 },
+  { key: "Estonia", value: 8.8 },
+  { key: "Latvia", value: 15.8 },
+  { key: "Lithuania", value: 12.8 },
+  { key: "Croatia", value: 5.8 },
+].toSorted((a, b) => b.value - a.value);
 
-    handleResize(); // initial
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+export function BarChartVertical(): JSX.Element {
+  const yScale = scaleBand<string>()
+    .domain(data.map((d) => d.key))
+    .range([0, 100])
+    .padding(0.6);
 
-  const chartData = [
-    { key: "Surat CSR", value: data?.result?.CSR ?? 0 },
-    { key: "Surat Kerja Praktek", value: data?.result?.KerjaPraktik ?? 0 },
-    { key: "Surat Kerja Sama", value: data?.result?.KerjaSama ?? 0 },
-    { key: "Surat Narasumber", value: data?.result?.Narasumber ?? 0 },
-    { key: "Surat Presentasi", value: data?.result?.Presentasi ?? 0 },
-    { key: "Surat Meeting", value: data?.result?.Meeting ?? 0 },
-    { key: "Surat Undangan", value: data?.result?.Undangan ?? 0 },
-    { key: "Surat Knowledge", value: data?.result?.Knowledge ?? 0 },
-    { key: "Surat Tugas", value: data?.result?.Tugas ?? 0 },
-    { key: "Surat Lamaran", value: data?.result?.Lamaran ?? 0 },
-    { key: "Surat Penelitian", value: data?.result?.Penelitian ?? 0 },
-  ];  
+  const xScale = scaleLinear()
+    .domain([0, max(data, (d) => d.value) ?? 0])
+    .range([0, 100]);
 
-  // Hitung width berdasarkan jumlah bar
-    const width = containerWidth || 600; // fallback 600px
-
-
-  const xScale = d3
-    .scaleBand<string>()
-    .domain(chartData.map((d) => d.key))
-    .range([margin.left, width - margin.right])
-    .padding(0.3);
-
-  const yScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(chartData, (d) => d.value) ?? 0])
-    .nice()
-    .range([height - margin.bottom, margin.top]);
-
-  const [tooltip, setTooltip] = useState<TooltipData | null>(null);
+  const longestWord = max(data, (d) => d.key.length) || 1;
 
   return (
-    <div ref={wrapperRef} className="relative w-full">
-      <svg width={width} height={height}>
-        {/* Grid Y */}
-        {yScale.ticks(5).map((tick, i) => (
-          <g key={i} transform={`translate(${margin.left},${yScale(tick)})`}>
-            <line
-              x2={width - margin.left - margin.right}
-              stroke="lightgray"
-              strokeDasharray="5,5"
-            />
-            <text
-              x={-10}
-              y={5}
-              fontSize="10"
-              textAnchor="end"
-              fill="gray"
-            >
-              {tick}
-            </text>
-          </g>
-        ))}
-
-        {/* Bars */}
-        {chartData.map((d, i) => {
-          const x = xScale(d.key) ?? 0;
-          const bw = xScale.bandwidth();
-          const barHeight = height - margin.bottom - yScale(d.value);
-          const barY = yScale(d.value);
+    <div
+      className="relative w-full h-72"
+      style={
+        {
+          "--marginTop": "0px",
+          "--marginRight": "0px",
+          "--marginBottom": "16px",
+          "--marginLeft": `${longestWord * 7}px`,
+        } as CSSProperties
+      }
+    >
+      <div
+        className="absolute inset-0 z-10 h-[calc(100%-var(--marginTop)-var(--marginBottom))] translate-y-[var(--marginTop)] w-[calc(100%-var(--marginLeft)-var(--marginRight))] translate-x-[var(--marginLeft)] overflow-visible"
+      >
+        {/* Hover Areas */}
+        {data.map((d, index) => {
+          const barWidth = xScale(d.value);
+          const barHeight = yScale.bandwidth();
+          const hoverColor =
+            barWidth > 50
+              ? "hover:bg-pink-200/40"
+              : barWidth > 25
+                ? "hover:bg-purple-200/40"
+                : barWidth > 10
+                  ? "hover:bg-indigo-200/40"
+                  : "hover:bg-sky-200/40";
 
           return (
-            <rect
-              key={i}
-              x={x}
-              y={barY}
-              width={bw}
-              height={barHeight}
-              fill="url(#barGradient)"
-              rx="4"
-              onMouseEnter={() =>
-                setTooltip({
-                  x: x + bw / 2,
-                  y: barY - 10,
-                  label: d.key,
-                  value: d.value,
-                })
-              }
-              onMouseLeave={() => setTooltip(null)}
+            <div
+              key={`hover-${index}`}
+              style={{
+                position: "absolute",
+                left: "0",
+                top: `${yScale(d.key)}%`,
+                width: "100%",
+                height: `calc(${barHeight}% + 8px)`,
+                transform: "translateY(-4px)",
+              }}
+              className={`${hoverColor} hover:bg-gray-200/50 relative z-10`}
             />
           );
         })}
 
-        {/* Labels X */}
-        {chartData.map((d, i) => (
-          <text
-            key={i}
-            x={(xScale(d.key) ?? 0) + xScale.bandwidth() / 2}
-            y={height - 10}
-            fontSize="10"
-            textAnchor="middle"
-            fill="gray"
-            transform={`rotate(-10 ${(xScale(d.key) ?? 0) + xScale.bandwidth() / 2}, ${height - 10})`}
+        {/* Bars */}
+        {data.map((d, index) => {
+          const barWidth = xScale(d.value);
+          const barHeight = yScale.bandwidth();
+          const barColor =
+            barWidth > 50
+              ? "bg-pink-300 dark:bg-pink-500"
+              : barWidth > 25
+                ? "bg-purple-300 dark:bg-purple-500"
+                : barWidth > 10
+                  ? "bg-indigo-300 dark:bg-indigo-500"
+                  : "bg-sky-300 dark:bg-sky-500";
+
+          return (
+            <React.Fragment key={`bar-${index}`}>
+              <div
+                style={{
+                  position: "absolute",
+                  left: "0",
+                  top: `${yScale(d.key)}%`,
+                  width: `${barWidth}%`,
+                  height: `${barHeight}%`,
+                }}
+                className={`${barColor}`}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  left: `${barWidth}%`,
+                  top: `${(yScale(d.key) ?? 0) + barHeight / 2}%`,
+                  transform: "translate(-100%, -50%)",
+                  width: "9px",
+                  height: "9px",
+                  borderRadius: "2px",
+                }}
+                className={`${barColor}`}
+              />
+            </React.Fragment>
+          );
+        })}
+
+        {/* Grid Lines */}
+        <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {xScale
+            .ticks(8)
+            .map(xScale.tickFormat(8, "d"))
+            .map((tick, i) => (
+              <g
+                key={`grid-${i}`}
+                transform={`translate(${xScale(+tick)},0)`}
+                className="text-gray-300/80 dark:text-gray-800/80"
+              >
+                <line
+                  y1={0}
+                  y2={100}
+                  stroke="currentColor"
+                  strokeDasharray="6,5"
+                  strokeWidth={0.5}
+                  vectorEffect="non-scaling-stroke"
+                />
+              </g>
+            ))}
+        </svg>
+
+        {/* X Axis Labels */}
+        {xScale.ticks(4).map((value, i) => (
+          <div
+            key={`x-label-${i}`}
+            style={{
+              left: `${xScale(value)}%`,
+              top: "100%",
+            }}
+            className="absolute text-xs -translate-x-1/2 tabular-nums text-gray-400"
           >
-            {d.key.length > 20 ? `${d.key.slice(0, 20)}...` : d.key}
-          </text>
+            {value}
+          </div>
         ))}
+      </div>
 
-        {/* Gradient */}
-        <defs>
-          <linearGradient id="barGradient" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#8b0000" />
-            <stop offset="100%" stopColor="#b22222" />
-          </linearGradient>
-        </defs>
-      </svg>
-
-      {/* Tooltip */}
-      {tooltip && (
-        <div
-          style={{
-            position: "absolute",
-            top: tooltip.y,
-            left: tooltip.x,
-            transform: "translate(-50%, -100%)",
-            backgroundColor: "white",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "6px 10px",
-            fontSize: "12px",
-            boxShadow: "0px 2px 8px rgba(0,0,0,0.15)",
-            pointerEvents: "none",
-            whiteSpace: "nowrap",
-            zIndex: 10,
-          }}
-        >
-          <strong>{tooltip.label}</strong>: {tooltip.value}
-        </div>
-      )}
+      {/* Y Axis Labels */}
+      <div className="h-[calc(100%-var(--marginTop)-var(--marginBottom))] w-[var(--marginLeft)] translate-y-[var(--marginTop)] overflow-visible">
+        {data.map((entry, i) => (
+          <span
+            key={`y-label-${i}`}
+            style={{
+              left: "0",
+              top: `${(yScale(entry.key) ?? 0) + yScale.bandwidth() / 2}%`,
+            }}
+            className="absolute text-xs text-gray-400 -translate-y-1/2 w-full text-right pr-2"
+          >
+            {entry.key}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
-
-
-export default BarChartVertical;

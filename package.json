@@ -37,6 +37,7 @@
     "react-date-range": "^2.0.1",
     "react-dom": "^18.3.1",
     "react-easy-crop": "^5.4.1",
+    "rsuite": "^5.80.2",
     "sass": "^1.87.0",
     "sweetalert2": "^11.21.0",
     "tippy.js": "^6.3.7"
