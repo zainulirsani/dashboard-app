@@ -24,10 +24,8 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
   const totalPenawaran = useMemo(() => data.result.totalPenawaran || [], [data.result.totalPenawaran]);
   const totalInformasi = useMemo(() => data.result.totalInformasiHarga || [], [data.result.totalInformasiHarga]);
   const totalDraft = useMemo(() => data.result.totalDraft || [], [data.result.totalDraft]);
-  const bulanList = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-  ];
+  const bulanList = useMemo(() => [ "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"], []);
   const toggleDateRange = () => {
     setShowDateRange(!showDateRange);
   };

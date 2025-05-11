@@ -1,0 +1,48 @@
+.calendar-agenda-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    align-items: flex-start;
+  }
+  
+  .calendar-wrapper {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .agenda-panel {
+    flex: 1;
+    max-width: 500px;
+    background: #fff;
+    padding: 20px;
+    border-left: 1px solid #eee;
+    overflow-y: auto;
+    max-height: 600px;
+  }
+  
+  .agenda-list-wrapper {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .agenda-date-title {
+    margin-bottom: 15px;
+  }
+  
+  .no-agenda-message, .agenda-placeholder {
+    padding: 20px;
+    font-style: italic;
+    color: #888;
+  }
+  
+  .agenda-item-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .agenda-item-time, .agenda-item-subtitle {
+    color: #555;
+    font-size: 13px;
+  }
+  

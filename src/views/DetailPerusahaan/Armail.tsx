@@ -1,10 +1,14 @@
 // ArmaiView.tsx
 import styles from "@/styles/Armail.module.scss";
 import { useEffect, useState } from "react";
-import { ArmailType, CSRType, KerjaSamaType, KerjaPraktikType, NarasumberType, PresentasiType } from "@/types/armail.type";
+import { ArmailType, CSRType, KerjaSamaType, KerjaPraktikType, NarasumberType, PresentasiType, BulanDataType } from "@/types/armail.type";
 import DateRangeInput from "@/components/elements/Daterange/Daterange";
 import { CalendarAgenda } from "@/components/elements/Calender/CalenderRsuitejs";
-
+import DateYearInput from "@/components/elements/Daterange/DateYear";
+import dynamic from 'next/dynamic';
+const DataTable = dynamic(() => import('react-data-table-component'), {
+  ssr: false,
+});
 
 
 interface ArmailViewProps {
@@ -12,6 +16,9 @@ interface ArmailViewProps {
 }
 
 const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
+  const tahunOptions = data?.result?.jumlah?.map((j) => j.tahun.toString()) || [];
+  const defaultYear = tahunOptions[tahunOptions.length - 1] || "";
+  const [selectedYear, setSelectedYear] = useState(defaultYear);
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
   const [showDateRange, setShowDateRange] = useState(false);
@@ -22,7 +29,37 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
     setStartDate(startDate);
     setEndDate(endDate);
   };
-
+  const handleYearChange = (year: number) => {
+    setSelectedYear(String(year));
+  };
+  const ALL_MONTHS = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+  const normalizeMonthlyData = (rawData: BulanDataType[]): BulanDataType[] => {
+    return ALL_MONTHS.map((bulan) => {
+      const found = rawData.find((item) => item.bulan === bulan);
+      return {
+        bulan,
+        Undangan: 0,
+        CSR: 0,
+        Meeting: 0,
+        Narasumber: 0,
+        Presentasi: 0,
+        KerjaPraktik: 0,
+        KerjaSama: 0,
+        Knowledge: 0,
+        Tugas: 0,
+        Lamaran: 0,
+        Penelitian: 0,
+        ...found
+      };
+    });
+  };
+  
+  const rawData =
+    data?.result?.jumlah?.find((j) => j.tahun.toString() === selectedYear)?.data || [];
+  const jumlahPerTahun = normalizeMonthlyData(rawData);
   const [filteredDataCSR, setFilteredDataCSR] = useState<CSRType[]>(data.result.CSR || []);
   const [filteredDataKerjaSama, setFilteredDataKerjaSama] = useState<KerjaSamaType[]>(data.result.KerjaSama || []);
   const [filteredDataKerjaPraktik, setFilteredDataKerjaPraktik] = useState<KerjaPraktikType[]>(data.result.KerjaPraktik || []);
@@ -115,7 +152,6 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
     tanggal: item.tanggal,
     total: Number(item.total),
   }));
-  console.log(dataCSR);
   const dataKerjaSama = filteredDataKerjaSama.map((item: KerjaSamaType) => ({
     tanggal: item.tanggal,
     total: Number(item.total),
@@ -168,6 +204,74 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
   const totalTugas = dataTugas.reduce((sum, item) => sum + (item.total || 0), 0);
   const totalLamaran = dataLamaran.reduce((sum, item) => sum + (item.total || 0), 0);
   const totalPenelitian = dataPenelitian.reduce((sum, item) => sum + (item.total || 0), 0);
+
+
+  const columns = [
+    {
+      name: "Bulan",
+      selector: (row: BulanDataType) => row.bulan,
+      sortable: true,
+    },
+    {
+      name: "Undangan",
+      selector: (row: BulanDataType) => row.Undangan,
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "CSR",
+      selector: (row: BulanDataType) => row.CSR,
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "Meeting",
+      selector: (row: BulanDataType) => row.Meeting,
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "Narasumber",
+      selector: (row: BulanDataType) => row.Narasumber,
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "Presentasi",
+      selector: (row: BulanDataType) => row.Presentasi,
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "Kerja Praktik",
+      selector: (row: BulanDataType) => row.KerjaPraktik,
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "Kerja Sama",
+      selector: (row: BulanDataType) => row.KerjaSama,
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "Penelitian",
+      selector: (row: BulanDataType) => row.Penelitian,
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "Tugas",
+      selector: (row: BulanDataType) => row.Tugas,
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "Lamaran",
+      selector: (row: BulanDataType) => row.Lamaran,
+      sortable: true,
+    }
+  ];
 
   return (
     <section className="p-3">
@@ -349,215 +453,37 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
         </div>
       </div>
       <div className="card mb-3">
-        <div className="card-body">
-          <div className="row px-1 mb-2 gap-3 justify-content-center">
-            <CalendarAgenda suratData={data?.result?.Surat || []} />
+
+        <div className="row px-1 mb-2 gap-3 justify-content-center">
+          <CalendarAgenda suratData={data?.result?.Surat || []} />
+        </div>
+      </div>
+      <div className="card mb-3">
+        <div className={`${styles.card__cardHeader} d-flex justify-content-between align-items-center`}>
+          <h6 className="card-title text-start text-white mb-0">Rekap Perbaikan</h6>
+          <div className={`${styles.card__cardHeader__date} d-flex align-items-center gap-2`}>
+            <DateYearInput
+              options={tahunOptions.map(Number)}
+              value={parseInt(selectedYear)}
+              onChange={handleYearChange}
+            />
           </div>
         </div>
-      </div>
-      <div className="card mb-3">
         <div className="card-body">
-          <div id="calendar"></div>
+          <div style={{ overflowX: 'auto' }}>
+            <DataTable
+              columns={columns}
+              data={jumlahPerTahun}
+              highlightOnHover
+              striped
+              responsive={false} // nonaktifkan 'responsive' bawaan agar tidak memaksa stacking
+              noHeader
+            />
+          </div>
+
         </div>
       </div>
-      <div className="card mb-3">
-        <div className="card-header">
-          <h5 className="card-title text-center">
-            Rekap Seluruh Surat Tahun 2025
-          </h5>
-        </div>
-        <div className="card-body">
-          <table id="example" className="display nowrap" style={{ width: '120px' }}>
-            <thead>
-              <tr>
-                <th style={{ width: '100px' }}>Bulan</th>
-                <th style={{ width: '80px' }}>Surat CSR</th>
-                <th>Surat Kerja Praktek</th>
-                <th>Surat Kerja Sama</th>
-                <th>Surat Narasumber</th>
-                <th>Surat Presentasi</th>
-                <th>Surat Meeting</th>
-                <th>Surat Undangan</th>
-                <th>Surat Knowledge</th>
-                <th>Surat Tugas</th>
-                <th>Surat Lamaran</th>
-                <th>Surat Penelitian</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Januari</td>
-                <td>14</td>
-                <td>11</td>
-                <td>12</td>
-                <td>2</td>
-                <td>0</td>
-                <td>0</td>
-                <td>13</td>
-                <td>1</td>
-                <td>12</td>
-                <td>5</td>
-                <td>2</td>
-              </tr>
-              <tr>
-                <td>Februari</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>Maret</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>April</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>Mei</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>Juni</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>Juli</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>Agustus</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>September</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>Oktober</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>November</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>Desember</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+    </section >
   );
 };
 

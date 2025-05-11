@@ -120,7 +120,7 @@ const LineChart: React.FC<LineChartProps> = ({ chartData, titleX, titleY, isNomi
         padding: "0 10px",
       }}
     >
-      <div style={{ height: "400px" }}>
+      <div style={{ height: "400px", width: "110%" }}>
         <canvas ref={chartRef} />
       </div>
     </div>

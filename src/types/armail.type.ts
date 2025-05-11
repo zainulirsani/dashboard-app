@@ -89,12 +89,15 @@ export interface BulanDataType {
   Penelitian?: number;
 }
 type Agenda = {
+  jenis_surat: string;
   tanggal_awal: string;
   waktu_mulai: string;
   waktu_selesai: string;
   acara: string;
   nama_pengguna: string;
+  keterangan: string; 
 };
+
 
 
 // Pastikan SuratType memiliki semua properti yang sama dengan Surat
@@ -108,15 +111,3 @@ type SuratType = {
   keterangan: string;
   penugasan: { id: number; agenda: Agenda[] }[]; // Perhatikan penugasan di sini
 };
-export type JenisSurat =
-  | "CSR"
-  | "KerjaPraktik"
-  | "KerjaSama"
-  | "Narasumber"
-  | "Presentasi"
-  | "Meeting"
-  | "Undangan"
-  | "Knowledge"
-  | "Tugas"
-  | "Lamaran"
-  | "Penelitian";

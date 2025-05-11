@@ -17,7 +17,7 @@
 }
 .search {
   width: 100%;
-  max-width: 230px;
+  width: 300px;
   height: 40px;
   border: none;
   font-size: 14px;
@@ -26,6 +26,18 @@
   border-radius: 100px;
   background-color: #efeff9;
   box-sizing: border-box;
+  border: #787676 solid 2px;
+}
+.datePickerWrapper {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  margin-top: 4px;
+  width: max-content; /* ⬅ Hanya sebesar isi dalamnya */
 }
 .largeCard {
   width: 300px;
