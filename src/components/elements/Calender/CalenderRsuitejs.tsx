@@ -17,7 +17,7 @@ type Agenda = {
 
 type Penugasan = {
   agenda: Agenda[];
-};
+};  
 
 type Surat = {
   penugasan: Penugasan[];

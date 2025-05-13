@@ -84,7 +84,7 @@ const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
       });
   
       const result = await response.json();
-  
+      console.log(result);
       if (response.ok) {
         setPerusahaanList((prev) =>
           selectedPerusahaan
@@ -137,9 +137,9 @@ const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
         />
       </div>
       <header className={`${styles.header} d-flex align-items-center justify-content-between`}>
-        <h3 className={`${styles.header__h3} text-center flex-grow-1`}>Daftar Anak Perusahaan</h3>
+        <h3 className={`${styles.header__h3} text-center flex-grow-1`}>Daftar Sistem Perusahaan</h3>
         <button type="button" className="btn btn-success btn-sm" onClick={() => setShowModal(true)}>
-          <i className="fas fa-plus me-1"></i> Tambah Perusahaan
+          <i className="fas fa-plus me-1"></i> Tambah Sistem
         </button>
       </header>
 
