@@ -3,7 +3,7 @@ import { Calendar, Badge, List, Stack } from 'rsuite';
 import 'rsuite/Calendar/styles/index.css';
 import 'rsuite/Badge/styles/index.css';
 import 'rsuite/List/styles/index.css';
-import '@/styles/Calender.css';
+import '@/styles/Calender.module.css';
 
 type Agenda = {
   tanggal_awal: string;

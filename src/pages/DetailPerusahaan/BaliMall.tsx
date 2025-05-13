@@ -15,7 +15,7 @@ export async function getStaticProps() {
     const response = await res.json();
     return {
         props: {
-           balimall : response
+           balimall : response.result
         },
         revalidate: 500
     };

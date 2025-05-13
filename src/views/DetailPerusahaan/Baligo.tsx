@@ -1,9 +1,37 @@
 import styles from "@/styles/baligo.module.scss";
-import { baligoType, PengirimanItem, PengirimanSelesai, revenue } from "@/types/baligo.type";
+import { baligoType, detail, PengirimanItem, PengirimanSelesai, revenue } from "@/types/baligo.type";
 import DateRangeInput from '@/components/elements/Daterange/Daterange';
 import { useEffect, useState } from 'react';
+import { DonutChartCenterText } from "@/components/elements/Chart/donuteChart";
+interface GroupedKotaItem {
+    kota: string;
+    total_tarif: number;
+    jumlah_pengiriman: number;
+    barang: {
+        id: number;
+        detail_barang: string;
+        total_tarif: number;
+        created_at: string;
+        nama_pengirim: string;
+        nama_penerima: string;
+    }[];
+}
 
-
+type KotaItem = {
+    kota: string;
+    jumlah: number;
+    persentase: number;
+    total_tarif: number;
+    totalJumlah: number;
+    barang: {
+        id: number;
+        detail_barang: string;
+        total_tarif: number;
+        created_at: string;
+        nama_pengirim: string;
+        nama_penerima: string;
+    }[];
+};
 const BaligoView = ({ data }: { data: baligoType }) => {
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
@@ -12,46 +40,46 @@ const BaligoView = ({ data }: { data: baligoType }) => {
     const [filteredDataPengiriman, setFilteredDataPengiriman] = useState<PengirimanItem[]>(data.pengiriman_count || []);
     const [filteredDataPengirimanSelesai, setFilteredDataPengirimanSelesai] = useState<PengirimanSelesai[]>(data.pengiriman_selesai_count || []);
     const [filteredDataRevenue, setFilteredDataRevenue] = useState<revenue[]>(data.revenue || []);
+    const [filteredDetail, setFilteredDetail] = useState<detail[]>(data.detail || []);
     const toggleDateRange = () => {
         setShowDateRange(!showDateRange);
-      };
-      const handleDateChange = ({ startDate, endDate }: { startDate: string; endDate: string }) => {
-        setStartDate(startDate);
-          setEndDate(endDate);
-          console.log("tanggalMulai:", startDate);
-          console.log("tanggalSelesai:", endDate);
     };
-      useEffect(() => {
+    const handleDateChange = ({ startDate, endDate }: { startDate: string; endDate: string }) => {
+        setStartDate(startDate);
+        setEndDate(endDate);
+    };
+    useEffect(() => {
         if (startDate && endDate) {
             if (!isValidDate(startDate) || !isValidDate(endDate)) {
                 console.error("Tanggal tidak valid");
                 return;
             }
-    
+
             const start = new Date(startDate);
             const end = new Date(endDate);
             end.setHours(23, 59, 59, 999);
-    
+
             const isInRange = (dateStr: string) => {
                 const parsedDate = new Date(dateStr);
                 return parsedDate.getTime() >= start.getTime() && parsedDate.getTime() <= end.getTime();
             };
-    
+
             const filterPengirimanCount = data.pengiriman_count.filter((item) => isInRange(item.date));
             const filterPengirimanSelesai = data.pengiriman_selesai_count.filter((item) => isInRange(item.date));
             const filterRevenue = data.revenue.filter((item) => isInRange(item.date));
-    
+            const filterDetail = data.detail.filter((item) => isInRange(item.created_at));
+
             setFilteredDataPengiriman(filterPengirimanCount);
             setFilteredDataPengirimanSelesai(filterPengirimanSelesai);
             setFilteredDataRevenue(filterRevenue);
+            setFilteredDetail(filterDetail);
         } else {
             setFilteredDataPengiriman(data.pengiriman_count);
             setFilteredDataPengirimanSelesai(data.pengiriman_selesai_count);
             setFilteredDataRevenue(data.revenue);
+            setFilteredDetail(data.detail);
         }
     }, [startDate, endDate, data]);
-    
-
 
     const totalPengiriman = filteredDataPengiriman.reduce((sum, item) => sum + item.count, 0);
     const totalPengirimanSelesai = filteredDataPengirimanSelesai.reduce((sum, item) => sum + item.count, 0);
@@ -61,6 +89,56 @@ const BaligoView = ({ data }: { data: baligoType }) => {
         currency: 'IDR',
         minimumFractionDigits: 0
     }).format(totalRevenue);
+
+    const groupedByKota: Record<string, GroupedKotaItem> = {};
+
+    
+    // Langkah 2: Grup berdasarkan kota
+    filteredDetail.forEach(item => {
+      const kota = item.kota;
+      if (!groupedByKota[kota]) {
+        groupedByKota[kota] = {
+          kota: kota,
+          total_tarif: 0,
+          jumlah_pengiriman: 0,
+          barang: []
+        };
+      }
+    
+      groupedByKota[kota].total_tarif += item.total_tarif;
+      groupedByKota[kota].jumlah_pengiriman += 1;
+      groupedByKota[kota].barang.push({
+        id: item.id,
+        detail_barang: item.detail_barang,
+        total_tarif: item.total_tarif,
+        created_at: item.created_at,
+        nama_pengirim: item.nama_pengirim,
+        nama_penerima: item.nama_penerima
+      });
+    });
+    
+    // Langkah 3: Ubah object ke array
+    const groupedKotaArray: GroupedKotaItem[] = Object.values(groupedByKota);
+    
+    // Langkah 4: Hitung total jumlah
+    const totalJumlah: number = groupedKotaArray.reduce(
+      (sum, item) => sum + item.jumlah_pengiriman,
+      0
+    );
+    
+    // Langkah 5: Hitung persentase dan buat hasil akhir
+    const result: KotaItem[] = groupedKotaArray.map(item => {
+      const persentase = (item.jumlah_pengiriman / totalJumlah) * 100;
+      return {
+        kota: item.kota,
+        jumlah: item.jumlah_pengiriman,
+        persentase: persentase,
+        total_tarif: item.total_tarif,
+        barang: item.barang,
+        totalJumlah: totalJumlah
+      };
+    });
+    
     return (
         <section className="p-3">
             <header className={`${styles.header} d-flex justify-content-between`}>
@@ -170,10 +248,24 @@ const BaligoView = ({ data }: { data: baligoType }) => {
                     <p className={`${styles.largeCard__description} text-center`}>Revenue</p>
                 </div>
             </div>
-            <div className="card px-1 gap-4 justify-content-center mb-3">
+            <div className="px-1 gap-4 justify-content-center mb-3">
+                <div className="row g-4">
+                    <div className="col-xl-6 col-12">
+                        <div className={`${styles.customCard} card`}>
+                            <div className={styles.customCard__cardHeader}>
+                                <h6 className="mb-0">Jumlah Pengiriman per Kota Tujuan</h6>
+                            </div>
+                            <div className={`${styles.customCard__cardBody} collapse show`}>
+                            <DonutChartCenterText kotaData={result} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-xl-6 col-12">
 
+                </div>
             </div>
-        </section>
+        </section >
     )
 };
 

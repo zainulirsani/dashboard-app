@@ -1,52 +1,45 @@
 export interface BalimallType {
-  meta: {
-    code: number;
-    status: string;
-    message: string | null;
-  };
-  result: {
-    total_order: number;
-    nominal_order: number;
-    total_orders_by_category: CategoryData[];
-    total_nominal_by_category: CategoryData[];
-    total_order_by_year: OrderByYear[];
-    total_order_by_month: OrderByMonth[];
-    total_nominal_by_month: OrderByMonth[];
-    states: StateData[];
-    merchant: MerchantData[];
-  };
+  totalOrderByDate: OrderByDateItem[];
+  states: StatesItem[];
+  merchant: MerchantItem[];
+  ordersByCategory: OrdersByCategory[];
 }
 
-type CategoryData = {
-  category_name: string;
+export interface OrderByDateItem {
+  date: string;
   total_orders: number;
   total_nominal: number;
+}
 
-  [key: string]: string | number; // Opsional jika ada tambahan properti dinamis
-};
-
-type StateData = {
+export type StatesItem = {
+  tanggal: string;
+  data: StateDataItem[];
   city: string;
   total: number;
-
-  [key: string]: string | number; // Opsional jika ada tambahan properti dinamis
+  total_nominal: number;
 };
+export interface StateDataItem {
+  city: string;
+  total: number;
+  total_nominal: number;
+}
 
-type MerchantData = {
+export interface MerchantItem {
+  tanggal: string; // format: YYYY-MM-DD
+  data: MerchantDataItem[];
+}
+export interface MerchantDataItem {
   merchant_name: string;
   total_orders: number;
   total_nominal: number;
-
-  [key: string]: string | number; // Opsional jika ada tambahan properti dinamis
-};
-type OrderByYear = {
-  data: {
-    total_orders: number;
-    total_nominal: number; 
-  }
 }
-type OrderByMonth = {
-  [year: string]: {
-    [month: string]: number;
-  };
-};
+
+export interface OrdersByCategory{
+  tanggal: string; // format YYYY-MM-DD
+  data: OrderCategoryItem[];
+}
+export interface OrderCategoryItem {
+  category_name: string;
+  total_orders: number;
+  total_nominal: number;
+}

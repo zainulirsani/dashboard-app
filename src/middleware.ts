@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
+interface Perusahaan {
+  slug_perusahaan: string;
+  // tambahkan properti lainnya sesuai dengan struktur data
+}
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("access_token")?.value;
 
@@ -58,7 +61,7 @@ export async function middleware(request: NextRequest) {
       }
 
       if (role === "kadiv") {
-        const slugsDiizinkan = perusahaan.map((p: any) => p.slug_perusahaan);
+        const slugsDiizinkan = perusahaan.map((p: Perusahaan) => p.slug_perusahaan);
         if (!slugsDiizinkan.includes(slug)) {
           return NextResponse.redirect(new URL(`/${role}`, request.url));
         }
@@ -67,7 +70,7 @@ export async function middleware(request: NextRequest) {
 
 
     return NextResponse.next();
-  } catch (err) {
+  } catch {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 }

@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useState} from "react";
 import styles from "./dashboard.module.scss";
 import { PerusahaanType } from "@/types/Perusahaan.type";
-import Swal from "sweetalert2";
 import Image from 'next/image';
 
 const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
@@ -15,8 +13,7 @@ const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
   const filteredPerusahaans = perusahaans.filter((perusahaan) =>
     perusahaan.nama_perusahaan.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const [isClient, setIsClient] = useState(false); // Tambahkan state ini
-  const router = useRouter();
+
 
 
   return (

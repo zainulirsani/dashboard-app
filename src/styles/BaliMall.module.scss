@@ -15,6 +15,30 @@
     color: #828ea5;
   }
 }
+.search {
+  width: 100%;
+  width: 300px;
+  height: 40px;
+  border: none;
+  font-size: 14px;
+  padding: 0 20px;
+  color: #828ea5;
+  border-radius: 100px;
+  background-color: #efeff9;
+  box-sizing: border-box;
+  border: #787676 solid 2px;
+}
+.datePickerWrapper {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  margin-top: 4px;
+  width: max-content; /* ⬅ Hanya sebesar isi dalamnya */
+}
 .cardLarge {
   height: 150px;
   width: 350px;

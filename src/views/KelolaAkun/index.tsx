@@ -30,7 +30,7 @@ const AkunViews = ({ data }: { data: UserData }) => {
       setFormData((prev) => ({ ...prev, [id]: value }));
     }
   };
-
+  console.log(handleChange);
   const handleSubmit = async (data: typeof formData) => {
     const submissionData = new FormData();
     submissionData.append('name', data.name);

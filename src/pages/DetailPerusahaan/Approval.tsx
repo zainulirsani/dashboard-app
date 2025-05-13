@@ -1,8 +1,8 @@
 import ApprovalView from "@/views/DetailPerusahaan/Approval";
-import { ApprovalType } from "@/types/approval.type";
+import { ApprovalData } from "@/types/approval.type";
 
 
-const ApprovalPage = (props: { approvals: [ApprovalType] }) => {
+const ApprovalPage = (props: { approvals: ApprovalData }) => {
     const { approvals } = props;
     return (
         <ApprovalView data={approvals} />

@@ -5,6 +5,7 @@ export interface baligoType {
   pengiriman_count: PengirimanItem[];
   pengiriman_selesai_count: PengirimanSelesai[];
   revenue: revenue[];
+  detail: detail[];
   date: string;
 }
 export interface PengirimanItem {
@@ -18,4 +19,13 @@ export interface PengirimanSelesai {
 export interface revenue {
   date: string;
   total_tarif: number;
+}
+export interface detail{
+  id: number;
+  nama_pengirim: string;
+  nama_penerima: string;
+  detail_barang: string;
+  total_tarif: number;
+  created_at: string;
+  kota: string;
 }

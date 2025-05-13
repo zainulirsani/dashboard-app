@@ -147,7 +147,7 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
       setFilteredDateInformasi(totalInformasi);
       setFilteredDateDraft(totalDraft);
     }
-  }, [startDate, endDate, totalPertanggal, totalSepakat, totalPenawaran, totalInformasi, totalDraft]);
+  }, [startDate, endDate, totalPertanggal, totalSepakat, totalTidakSepakat, totalPenawaran, totalInformasi, totalDraft]);
 
   const dataForChart = filteredData.map((item: totalPertanggalType) => ({
     tanggal: item.tanggal,

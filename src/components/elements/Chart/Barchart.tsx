@@ -57,10 +57,18 @@ const Barchart: React.FC<Props> = ({
 
   // Format pendek (untuk datalabels)
   const formatShortCurrency = (value: number) => {
-    if (value >= 1_000_000) return `Rp${(value / 1_000_000).toFixed(1)}jt`;
-    if (value >= 1_000) return `Rp${(value / 1_000).toFixed(1)}rb`;
+    const format = (val: number, suffix: string) => {
+      const formatted = (val).toFixed(1);
+      const clean = formatted.endsWith('.0') ? formatted.slice(0, -2) : formatted;
+      return `Rp${clean}${suffix}`;
+    };
+    if (value >= 1_000_000_000_000) return format(value / 1_000_000_000_000, 't');
+    if (value >= 1_000_000_000) return format(value / 1_000_000_000, 'm');
+    if (value >= 1_000_000) return format(value / 1_000_000, 'jt');
+    if (value >= 1_000) return format(value / 1_000, 'rb');
     return `Rp${value}`;
   };
+  
 
   const options = {
     responsive: true,
