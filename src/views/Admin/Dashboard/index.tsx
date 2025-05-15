@@ -180,9 +180,9 @@ const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
               width={300}
               height={300}
             />
-             <a href="#" className={`${styles.card__btn} text-center`}>
+             <button className={`${styles.card__btn} text-center`}>
               Detail
-            </a>
+            </button>
           </div>
         ))}
       </div>
