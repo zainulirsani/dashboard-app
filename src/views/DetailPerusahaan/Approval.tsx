@@ -297,7 +297,7 @@ const ApprovalView = ({ data }: Props) => {
                     {statuses.map((status, idx) => (
                         <div
                             key={status}
-                            className={`${styles.customCard} col-xl-3 col-12 card bg-${["success", "warning", "danger", "secondary"][idx]}`}
+                            className={`${styles.customCard} ${styles[`bgColor${idx}`]} col-xl-3 col-12 card`}
                         >
                             <p className={styles.customCard__title}>
                                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -306,6 +306,7 @@ const ApprovalView = ({ data }: Props) => {
                         </div>
                     ))}
                 </div>
+
             </div>
 
             <div className="row px-1 mb-3 gap-4 justify-content-center">
@@ -351,7 +352,7 @@ const ApprovalView = ({ data }: Props) => {
                                     />
                                 </div>
                                 {getStats().map((stat, idx) => (
-                                    <div key={idx} className={`${styles.statCard__statistic} col-xl-4 col-12 bg-${stat.bg}`}>
+                                    <div key={idx} className={`${styles.statCard__statistic} col-xl-4 col-12 ${styles[`bgColor${idx}`]}`}>
                                         <p>{stat.title}</p>
                                         <h3>{new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(stat.value)}</h3>
                                     </div>

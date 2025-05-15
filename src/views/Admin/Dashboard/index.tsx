@@ -75,7 +75,7 @@ const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
       if (selectedPerusahaan) {
         url = `http://127.0.0.1:8000/api/perusahaan/update/${selectedPerusahaan.id}`;
         formData.append("_method", "PUT"); // Laravel membutuhkan ini untuk update
-        method = "PUT"; // Gunakan method PUT saat update
+        method = "POST";
       }
   
       const response = await fetch(url, {

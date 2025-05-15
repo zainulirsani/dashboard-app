@@ -136,12 +136,22 @@
   overflow-x: auto;
 }
 
-/* Atur tabel agar bisa menyesuaikan scroll */
-#dataTable {
-  width: 100%;
-  min-width: 800px; // Atur sesuai kebutuhan
+.bgColor0 {
+  background-color: #075e2b; // green modern (success)
 }
 
+.bgColor1 {
+  background-color: #ebbd05; // yellow modern (warning)
+  color: #ffffff; // kontras lebih baik untuk teks
+}
+
+.bgColor2 {
+  background-color: #8b0000; // red modern (danger)
+}
+
+.bgColor3 {
+  background-color: #696969; // grey modern (secondary)
+}
 // =============================
 // Media Queries untuk Responsif
 // =============================

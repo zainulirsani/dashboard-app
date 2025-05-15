@@ -13,9 +13,6 @@ const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
   const filteredPerusahaans = perusahaans.filter((perusahaan) =>
     perusahaan.nama_perusahaan.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  // const [isClient, setIsClient] = useState(false); // Tambahkan state ini
-  // const router = useRouter();
-
 
   return (
     <section className="p-3">
