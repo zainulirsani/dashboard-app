@@ -7,4 +7,5 @@ export type UserType = {
     akses: string;
     password: string;
     user_id: number;
+    profilePic: string;
 };
