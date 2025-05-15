@@ -88,9 +88,8 @@ const AkunFormModal: React.FC<AkunFormModalProps> = ({
 
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        handleSubmit(formData); // Kirim ke API di parent component
-        // Jika perlu mengirim _method: PUT, bisa dilakukan di parent handleSubmit
-    };
+        handleSubmit(formData); // ini sudah benar, karena formData sudah menyimpan File hasil crop
+      };
 
     return (
         <Modal show={showModal} onHide={handleCloseModal} centered>
@@ -135,8 +134,9 @@ const AkunFormModal: React.FC<AkunFormModalProps> = ({
                                 <Image
                                     src={previewImage}
                                     alt="Preview"
+                                    width={150}
+                                    height={150}
                                     className="img-thumbnail rounded-circle"
-                                    style={{ maxWidth: '150px' }}
                                 />
                             </div>
                         )}

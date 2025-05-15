@@ -28,7 +28,7 @@ const Dashboard = ({ perusahaans }: { perusahaans: PerusahaanType[] }) => {
         />
       </div>
       <header className={`${styles.header} d-flex align-items-center justify-content-between`}>
-        <h3 className={`${styles.header__h3} text-center flex-grow-1`}>Daftar Sistem</h3>
+        <h3 className={`${styles.header__h3} text-center flex-grow-1`}>Daftar Sistem Perusahaan</h3>
       </header>
 
       <div className="row px-2  mb-2 gap-4 justify-content-start ms-4">

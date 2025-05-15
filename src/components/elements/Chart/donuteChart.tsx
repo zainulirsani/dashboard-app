@@ -25,7 +25,6 @@ type DonutChartProps = {
 
 export function DonutChartCenterText({ kotaData }: DonutChartProps) {
     const totalJumlah = kotaData.at(0)?.totalJumlah ?? 0;
-    console.log("totalJumlah diluar centerTextPlugin :", totalJumlah); 
   const data: ChartData<"doughnut", number[], string> = {
     labels: kotaData.map((d) => d.kota),
     datasets: [
@@ -65,8 +64,6 @@ export function DonutChartCenterText({ kotaData }: DonutChartProps) {
         const { ctx } = chart;
         const meta = chart.getDatasetMeta(0);
         const centerPoint = meta.data[0]; // Titik data pertama
-        console.log("meta.data", meta.data); // Cek apa yang ada di dalam meta.data
-        console.log("totalJumlah didalam centerTextPlugin (centerText):", totalJumlah);
       
         if (!centerPoint) return;
       

@@ -120,11 +120,28 @@ const LineChart: React.FC<LineChartProps> = ({ chartData, titleX, titleY, isNomi
         padding: "0 10px",
       }}
     >
-      <div style={{ height: "400px", width: "100%" }}>
-        <canvas ref={chartRef} />
-      </div>
+      {chartData.labels.length === 0 || chartData.datasets.length === 0 ? (
+        <div
+          style={{
+            height: "400px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#999",
+            fontSize: "18px",
+            fontStyle: "italic",
+          }}
+        >
+          Data Pada Rentang Tanggal Yang Dipilih Kosong
+        </div>
+      ) : (
+        <div style={{ height: "400px", width: "100%" }}>
+          <canvas ref={chartRef} />
+        </div>
+      )}
     </div>
   );
+  
 };
 
 export default LineChart;

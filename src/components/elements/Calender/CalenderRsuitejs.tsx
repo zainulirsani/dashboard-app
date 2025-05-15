@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Badge, List, Stack } from 'rsuite';
+import { Calendar, Badge, Stack } from 'rsuite';
 import 'rsuite/Calendar/styles/index.css';
 import 'rsuite/Badge/styles/index.css';
 import 'rsuite/List/styles/index.css';
@@ -107,26 +107,33 @@ export const CalendarAgenda = ({ suratData }: Props) => {
     }
 
     return (
-      <div className="agenda-list-wrapper">
-        <h4 className="agenda-date-title">
+      <div className="container py-4">
+        <h4 className="mb-4 fw-bold text-primary">
           Agenda tanggal {date.toLocaleDateString()}
         </h4>
-        <List bordered hover className="agenda-list">
+        <div className="list-group">
           {agendaList.map((item, idx) => (
-            <List.Item key={idx} index={idx} className="agenda-list-item">
-              <div className="agenda-item-title">{item.acara}</div>
-              <div>Jenis Surat :{item.jenis_surat}</div>
-              <div className="agenda-item-subtitle">👤 {item.nama_pengguna}</div>
-              <div className="agenda-item-time">🕒 {item.waktu_mulai} - {item.waktu_selesai}</div>
+            <div key={idx} className="list-group-item list-group-item-action shadow-sm mb-3 rounded">
+              <div className="d-flex w-100 justify-content-between">
+                <h5 className="mb-1 fw-semibold">{item.acara}</h5>
+                <small className="text-muted">
+                  🕒 {item.waktu_mulai} - {item.waktu_selesai}
+                </small>
+              </div>
+              <p className="mb-1 text-secondary">
+                Jenis Surat: <span className="fw-medium">{item.jenis_surat}</span>
+              </p>
+              <small className="text-muted d-block mb-2">👤 {item.nama_pengguna}</small>
               <div
-                className="agenda-item-description"
+                className="text-dark"
                 dangerouslySetInnerHTML={{ __html: item.keterangan }}
-              ></div>
-            </List.Item>
+              />
+            </div>
           ))}
-        </List>
+        </div>
       </div>
     );
+    
   };
 
   return (

@@ -7,70 +7,59 @@ type UserData = {
   id: number;
   name: string;
   email: string;
+  profilePic: string;
 };
 
 const AkunViews = ({ data }: { data: UserData }) => {
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: data.name || '',
-    email: data.email || '',
-    password: '',
-    profilePic: null as File | null,
-  });
 
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+  const dataUserId = data.id;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value, files } = e.target;
-
-    if (id === 'editProfile' && files?.length) {
-      setFormData((prev) => ({ ...prev, profilePic: files[0] }));
-    } else {
-      setFormData((prev) => ({ ...prev, [id]: value }));
-    }
-  };
-  console.log(handleChange);
-  const handleSubmit = async (data: typeof formData) => {
+  const handleSubmit = async (data: {
+    name: string;
+    email: string;
+    password: string;
+    profilePic: File | null;
+  }) => {
     const submissionData = new FormData();
+  
     submissionData.append('name', data.name);
     submissionData.append('email', data.email);
     submissionData.append('password', data.password);
     if (data.profilePic) {
       submissionData.append('profilePic', data.profilePic);
     }
-
+  
+    // Tambahkan method spoofing karena Laravel hanya menerima PUT via POST + _method
+    submissionData.append('_method', 'PUT');
+  
     try {
-      console.log('Data yang dikirim ke API:');
-      submissionData.forEach((value, key) => {
-        console.log(`${key}:`, value);
-      });
-
       const response = await fetch(
         `http://127.0.0.1:8000/api/user/updateAkun/${dataUserId}`,
         {
-          method: 'POST',
+          method: 'POST', // HARUS POST untuk FormData + Laravel spoofing
           body: submissionData,
         }
       );
-
-      const result = await response.json();
-
+  
+      const contentType = response.headers.get('content-type');
+      const isJson = contentType && contentType.includes('application/json');
+      const result = isJson ? await response.json() : await response.text();
+  
       if (response.ok) {
-        console.log('Success:', result);
-        // tampilkan notifikasi jika perlu
+        console.log('✅ Berhasil update:', result);
       } else {
-        console.error('Error:', result);
+        console.error('❌ Gagal update:', result);
       }
-
+  
       setShowModal(false);
     } catch (error) {
-      console.error('Network Error:', error);
+      console.error('⚠️ Network Error:', error);
     }
   };
-
-  const dataUserId = data.id;
-  const defaultValue = formData;
+  
 
   return (
     <section className={`p-4 ${styles.akunContainer}`}>
@@ -80,7 +69,7 @@ const AkunViews = ({ data }: { data: UserData }) => {
             <div className="card-body">
               <div className="text-center mb-4">
                 <Image
-                  src="/images/avatar.jpg"
+                  src={`http://127.0.0.1:8000/users/${data.profilePic}`}
                   width={120}
                   height={120}
                   className={`${styles.profilePic} rounded-circle`}
@@ -115,7 +104,12 @@ const AkunViews = ({ data }: { data: UserData }) => {
               showModal={showModal}
               handleCloseModal={handleCloseModal}
               handleSubmit={handleSubmit}
-              defaultValue={defaultValue}
+              defaultValue={{
+                name: data.name || '',
+                email: data.email || '',
+                password: '',
+                profilePic: null,
+              }}
             />
           )}
         </div>
@@ -123,5 +117,6 @@ const AkunViews = ({ data }: { data: UserData }) => {
     </section>
   );
 };
+
 
 export default AkunViews;

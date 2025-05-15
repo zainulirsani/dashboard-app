@@ -10,6 +10,7 @@ type NavbarProps = {
 
 const Navbar = ({ toggleSidebar }: NavbarProps) => {
   const [userName, setUserName] = useState<string>("");
+  const [Profile, setProfile] = useState<string>("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -27,7 +28,8 @@ const Navbar = ({ toggleSidebar }: NavbarProps) => {
 
         if (res.ok) {
           const data = await res.json();
-          setUserName(data.result.name); // ganti sesuai field nama dari respons
+          setUserName(data.result.name);
+          setProfile(data.result.profilePic);
         }
       } catch (error) {
         console.error("Gagal mengambil data user", error);
@@ -55,7 +57,7 @@ const Navbar = ({ toggleSidebar }: NavbarProps) => {
           <span className={styles.userName}>{userName}</span>
           <Link href="/KelolaAkun">
             <Image
-              src="/images/user.png"
+              src={`http://127.0.0.1:8000/users/${Profile}`}
               alt="Photo Profile"
               className={styles.avatar}
               width={40}

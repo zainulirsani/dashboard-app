@@ -45,4 +45,12 @@
     color: #555;
     font-size: 13px;
   }
+  .list-group-item {
+    transition: transform 0.2s ease;
+  }
   
+  .list-group-item:hover {
+    transform: scale(1.01);
+    background-color: #f8f9fa;
+  }
+    
