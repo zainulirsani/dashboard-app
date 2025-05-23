@@ -1,0 +1,40 @@
+.loginSection {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.cardModern {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  background-color: #ffffff;
+  transition: all 0.3s ease-in-out;
+}
+.cardModern:hover {
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.08);
+}
+.image {
+  border-radius: 1rem 0 0 1rem;
+  object-fit: cover;
+  height: 100%;
+}
+
+input.form-control {
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+button.btn-primary {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+button.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}

@@ -17,7 +17,7 @@ type Agenda = {
 
 type Penugasan = {
   agenda: Agenda[];
-};  
+};
 
 type Surat = {
   penugasan: Penugasan[];
@@ -43,7 +43,7 @@ export const CalendarAgenda = ({ suratData }: Props) => {
         waktu_mulai: '',
         waktu_selesai: '',
         acara: surat.perihal,
-        nama_pengguna: '-', 
+        nama_pengguna: '-',
       }];
     }
 
@@ -56,7 +56,7 @@ export const CalendarAgenda = ({ suratData }: Props) => {
           waktu_mulai: '',
           waktu_selesai: '',
           acara: surat.perihal,
-          nama_pengguna: '-', 
+          nama_pengguna: '-',
         }];
       }
 
@@ -114,18 +114,19 @@ export const CalendarAgenda = ({ suratData }: Props) => {
         <div className="list-group">
           {agendaList.map((item, idx) => (
             <div key={idx} className="list-group-item list-group-item-action shadow-sm mb-3 rounded">
-              <div className="d-flex w-100 justify-content-between">
+              <div className="mb-2">
                 <h5 className="mb-1 fw-semibold">{item.acara}</h5>
-                <small className="text-muted">
+                <small className="text-muted d-block">
                   🕒 {item.waktu_mulai} - {item.waktu_selesai}
                 </small>
               </div>
+
               <p className="mb-1 text-secondary">
                 Jenis Surat: <span className="fw-medium">{item.jenis_surat}</span>
               </p>
               <small className="text-muted d-block mb-2">👤 {item.nama_pengguna}</small>
               <div
-                className="text-dark"
+                className="text-dark agenda-keterangan"
                 dangerouslySetInnerHTML={{ __html: item.keterangan }}
               />
             </div>
@@ -133,7 +134,7 @@ export const CalendarAgenda = ({ suratData }: Props) => {
         </div>
       </div>
     );
-    
+
   };
 
   return (

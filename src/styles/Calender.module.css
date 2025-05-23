@@ -53,4 +53,43 @@
     transform: scale(1.01);
     background-color: #f8f9fa;
   }
+  
+  @media (max-width: 768px) {
+    .calendar-agenda-stack {
+      flex-direction: column !important;
+    }
+  
+    .calendar-wrapper {
+      width: 100% !important;
+    }
+  
+    .list-group-item {
+      font-size: 0.95rem;
+    }
+    .agenda-keterangan {
+      overflow-x: auto;
+      word-wrap: break-word;
+      max-width: 100%;
+    }
     
+    .agenda-keterangan table {
+      width: 100%;
+      max-width: 100%;
+      border-collapse: collapse;
+      display: block;
+      overflow-x: auto;
+    }
+    
+    .agenda-keterangan img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .agenda-keterangan p,
+    .agenda-keterangan span,
+    .agenda-keterangan div {
+      word-break: break-word;
+    }
+  }
+  

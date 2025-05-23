@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import styles from "@/styles/Arpro.module.scss";
+import { FaRegCalendarAlt } from 'react-icons/fa';
 import LineChart from "@/components/elements/Chart/LineChart";
 import { ArproType, JenisStatus, totalPertanggalType, totalSepakatType, tidakSepakatType, totalPenawaranType, totalInformasiHargaType, TahunJumlahType, presaleDataType, totalDraftType } from "@/types/arpro.type";
 import DateYearInput from "@/components/elements/Daterange/DateYear";
@@ -24,7 +25,7 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
   const totalPenawaran = useMemo(() => data.result.totalPenawaran || [], [data.result.totalPenawaran]);
   const totalInformasi = useMemo(() => data.result.totalInformasiHarga || [], [data.result.totalInformasiHarga]);
   const totalDraft = useMemo(() => data.result.totalDraft || [], [data.result.totalDraft]);
-  const bulanList = useMemo(() => [ "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  const bulanList = useMemo(() => ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
     "Juli", "Agustus", "September", "Oktober", "November", "Desember"], []);
   const toggleDateRange = () => {
     setShowDateRange(!showDateRange);
@@ -59,17 +60,17 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
 
   const columns = [
     {
-      name: "Bulan",
+      name: "Mounth",
       selector: (row: presaleDataType) => row.bulan,
       sortable: true,
     },
     {
-      name: "Sepakat",
+      name: "Agreed",
       selector: (row: presaleDataType) => row["Sepakat"],
       sortable: true,
     },
     {
-      name: "Penawaran",
+      name: "Offered ",
       selector: (row: presaleDataType) => row["Penawaran"],
       sortable: true,
     },
@@ -79,12 +80,12 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
       sortable: true,
     },
     {
-      name: "Informasi Harga",
+      name: "Price Info",
       selector: (row: presaleDataType) => row["Informasi Harga"],
       sortable: true,
     },
     {
-      name: "Tidak Sepakat",
+      name: "Disagreed Pre Sale",
       selector: (row: presaleDataType) => row["Tidak Sepakat"],
       sortable: true,
     },
@@ -92,6 +93,34 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
 
 
   const isValidDate = (date: string) => !isNaN(new Date(date).getTime());
+  useEffect(() => {
+    if (data.result.total && data.result.total.length > 0) {
+      // Ambil semua tanggal yang valid
+      const validDates = data.result.total
+        .map(item => new Date(item.tanggal))
+        .filter(date => !isNaN(date.getTime()));
+
+      // Ambil tahun terbesar
+      const latestYear = Math.max(...validDates.map(date => date.getFullYear()));
+
+      // Filter hanya data dari tahun terakhir
+      const datesInLatestYear = validDates.filter(date => date.getFullYear() === latestYear);
+
+      // Ambil bulan terbesar dari tahun tersebut (0 = Jan, 11 = Des)
+      const latestMonth = Math.max(...datesInLatestYear.map(date => date.getMonth()));
+
+      // Buat tanggal awal dan akhir bulan tersebut
+      const start = new Date(latestYear, latestMonth, 1);
+      const end = new Date(latestYear, latestMonth + 1, 0); // hari terakhir bulan itu
+
+      // Format ke yyyy-mm-dd
+      const formatDate = (date: Date) =>
+        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+      setStartDate(formatDate(start));
+      setEndDate(formatDate(end));
+    }
+  }, [data.result.total]);
 
   useEffect(() => {
     if (startDate && endDate) {
@@ -418,12 +447,13 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
       <div className="row px-1 mb-2 gap-5 justify-content-end">
         <div style={{ position: 'relative', width: 'auto' }}>
           <div
-            className={`${styles.search} d-flex align-items-center justify-content-start gap-2`}
+            className={`${styles.search} d-flex align-items-center justify-content-end gap-2`}
             onClick={toggleDateRange}
             style={{ cursor: 'pointer' }}
           >
+            <FaRegCalendarAlt style={{ fontSize: '1.2rem' }} /> {/* Ikon kalender */}
             <span>
-              Pilih Tanggal:
+              Date:
               {startDate && endDate && (
                 <> {new Date(startDate).toLocaleDateString('id-ID')} s.d. {new Date(endDate).toLocaleDateString('id-ID')}</>
               )}
@@ -433,7 +463,7 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
             <div className={styles.datePickerWrapper}>
               <DateRangeInput
                 onDateChange={handleDateChange}
-                onDone={() => setShowDateRange(false)} // Tutup saat selesai pilih
+                onDone={() => setShowDateRange(false)}
               />
             </div>
           )}
@@ -442,55 +472,49 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
       <div className="row px-1 gap-4 justify-content-center mb-3">
         <div className={`${styles.mediumCard} col-xl-2 col-6 card`}>
           <div className="card-content d-flex flex-column align-items-center justify-content-center">
-            <p className={`${styles.mediumCard__description} text-center mb-1`}>
-              Total Pre Sale
-            </p>
+            <p className={`${styles.mediumCard__description} text-center mb-1`}>Total Pre Sale</p>
             <h2 className={`${styles.mediumCard__number} mb-1 mt-1`}>{totalPresale}</h2>
-            <h5 className="text-light">{nominalPresaleFormatted}</h5>
+            <h5 className={`${styles.mediumCard__nominal} mb-1 mt-1 text-light`}>{nominalPresaleFormatted}</h5>
           </div>
         </div>
+
         <div className={`${styles.mediumCard} col-xl-2 col-6 card`}>
-          <div
-            className="card-content d-flex flex-column align-items-center justify-content-center"
-          >
-            <p className={`${styles.mediumCard__description} text-center mb-1`}>Pre Sale Sepakat</p>
+          <div className="card-content d-flex flex-column align-items-center justify-content-center">
+            <p className={`${styles.mediumCard__description} text-center mb-1`}>Agreed Pre Sale</p>
             <h2 className={`${styles.mediumCard__number} mb-1 mt-1`}>{SepakatCount}</h2>
-            <h5 className="text-light">{nominalSepakatFormatted}</h5>
+            <h5 className={`${styles.mediumCard__nominal} mb-1 mt-1 text-light`}>{nominalSepakatFormatted}</h5>
           </div>
         </div>
+
         <div className={`${styles.mediumCard} col-xl-2 col-12 card`}>
-          <div
-            className="card-content d-flex flex-column align-items-center justify-content-center"
-          >
-            <p className={`${styles.mediumCard__description} text-center mb-1`}>Pre Sale Tidak Sepakat</p>
+          <div className="card-content d-flex flex-column align-items-center justify-content-center">
+            <p className={`${styles.mediumCard__description} text-center mb-1`}>Disagreed Pre Sale</p>
             <h2 className={`${styles.mediumCard__number} mb-1 mt-1`}>{TidakSepakatCount}</h2>
-            <h5 className="text-light">{nominalTidakSepakatFormatted}</h5>
+            <h5 className={`${styles.mediumCard__nominal} mb-1 mt-1 text-light`}>{nominalTidakSepakatFormatted}</h5>
           </div>
         </div>
+
         <div className={`${styles.mediumCard} col-xl-2 col-12 card`}>
-          <div
-            className="card-content d-flex flex-column align-items-center justify-content-center"
-          >
-            <p className={`${styles.mediumCard__description} text-center mb-1`}>Pre Sale Penawaran</p>
+          <div className="card-content d-flex flex-column align-items-center justify-content-center">
+            <p className={`${styles.mediumCard__description} text-center mb-1`}>Offered Pre Sale</p>
             <h2 className={`${styles.mediumCard__number} mb-1 mt-1`}>{PenawaranCount}</h2>
-            <h5 className="text-light">{ nominalPenawaranFormatted}</h5>
+            <h5 className={`${styles.mediumCard__nominal} mb-1 mt-1 text-light`}>{nominalPenawaranFormatted}</h5>
           </div>
         </div>
-        {/* ( */}
+
         <div className={`${styles.mediumCard} col-xl-2 col-12 card`}>
-          <div
-            className="card-content d-flex flex-column align-items-center justify-content-center"
-          >
-            <p className={`${styles.mediumCard__description} text-center mb-1`}>Pre Sale Draft</p>
+          <div className="card-content d-flex flex-column align-items-center justify-content-center">
+            <p className={`${styles.mediumCard__description} text-center mb-1`}>Draft Pre Sale</p>
             <h2 className={`${styles.mediumCard__number} mb-1 mt-1`}>{DraftCount}</h2>
-            <h5 className="text-light">{ nominalDraftFormated}</h5>
+            <h5 className={`${styles.mediumCard__nominal} mb-1 mt-1 text-light`}>{nominalDraftFormated}</h5>
           </div>
         </div>
+
       </div>
       {/* Grafik */}
       <div className="card shadow-sm border-0 mb-3">
         <div className={`${styles.chart} card-header d-flex justify-content-between align-items-center text-white`}>
-          <h6 className="mb-0">Grafik Pre Sale</h6>
+          <h6 className="mb-0">Pre Sale Chart</h6>
 
           <div className="d-flex align-items-center">
             <select
@@ -498,15 +522,14 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
               value={selectedChart}
               onChange={(e) => setSelectedChart(e.target.value as ChartOption)}
             >
-              <option value="semua">Semua Status</option>
-              <option value="sepakat">Sepakat</option>
-              <option value="penawaran">Penawaran</option>
+              <option value="semua">All Statuses</option>
+              <option value="sepakat">Agreed</option>
+              <option value="penawaran">Offered</option>
               <option value="draft">Draft</option>
-              <option value="informasiHarga">Informasi Harga</option>
+              <option value="informasiHarga">Price Info</option>
             </select>
           </div>
         </div>
-
 
         <div className="card-body collapse show" id="grafikPresaleCollapse">
           <div className="mt-3 d-flex gap-2 justify-content-end">
@@ -520,26 +543,27 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
               className={`btn btn-sm ${selectData === 'nominal' ? 'btn-primary' : 'btn-outline-primary'}`}
               onClick={() => setSelectData('nominal')}
             >
-              Nominal
+              Amount
             </button>
           </div>
+
           {/* Chart */}
           <div className="chart-container" style={{ height: "400px", width: "97%" }}>
             <LineChart
               chartData={getDataForChart()!}
-              titleX="Tanggal"
-              titleY="Jumlah / Nominal"
+              titleX="Date"
+              titleY="Quantity / Amount"
               isNominal={true}
             />
-
           </div>
         </div>
       </div>
 
+
       {/* Tabel */}
       <div className="card mb-3">
         <div className={`${styles.card__cardHeader} d-flex justify-content-between align-items-center`}>
-          <h6 className="card-title text-start text-white mb-0">Data Pre Sale</h6>
+          <h6 className="card-title text-start text-white mb-0">Pre Sale Data</h6>
           <div className={`${styles.card__cardHeader__date} d-flex align-items-center gap-2`}>
             <DateYearInput
               options={availableYears}
@@ -548,6 +572,7 @@ const ArproView: React.FC<ArproViewProps> = ({ data }) => {
             />
           </div>
         </div>
+
         <div className="card-body">
           <DataTable
             columns={columns}

@@ -123,3 +123,18 @@
   }
 }
 
+@media (max-width: 834px) {
+  .cardLarge {
+    width: 100%;
+    &__iconStyle {
+      font-size: 28px;
+    }
+    &__description {
+      font-size: 18px;
+    }
+    &__transactionValue{
+      font-size: 24px;
+    }
+  }
+}
+

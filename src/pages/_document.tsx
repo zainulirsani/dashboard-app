@@ -48,7 +48,7 @@ export default function Document() {
           strategy="beforeInteractive"
         />
       </Head>
-      <body>
+      <body className="bg-white text-dark">
         <Main />
         <NextScript />
         {/* Bootstrap JavaScript */}

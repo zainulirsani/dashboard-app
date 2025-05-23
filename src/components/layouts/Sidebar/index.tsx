@@ -13,7 +13,7 @@ type SidebarProps = {
 };
 
 
-const Sidebar = ({ isActive, toggleSidebar}: SidebarProps) => {
+const Sidebar = ({ isActive, toggleSidebar }: SidebarProps) => {
   const router = useRouter();
   const [userRole, setUserRole] = useState<string | null>(null);
 
@@ -41,19 +41,19 @@ const Sidebar = ({ isActive, toggleSidebar}: SidebarProps) => {
   const handleLogout = () => {
     Swal.fire({
       title: "Logout",
-      text: "Apakah Anda yakin ingin keluar?",
+      text: "Are you sure you want to log out?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Ya, Keluar",
-      cancelButtonText: "Batal",
+      confirmButtonText: "Yes, Log Out",
+      cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         Cookies.remove("access_token");
 
         Swal.fire({
           icon: "success",
-          title: "Logout Berhasil",
-          text: "Anda akan dialihkan ke halaman login.",
+          title: "Logout Successful",
+          text: "You will be redirected to the login page.",
           timer: 2000,
           showConfirmButton: false,
         });
@@ -64,6 +64,7 @@ const Sidebar = ({ isActive, toggleSidebar}: SidebarProps) => {
       }
     });
   };
+
   const dashboardPath = userRole === "admin"
     ? "/admin"
     : userRole === "manager"
@@ -93,7 +94,6 @@ const Sidebar = ({ isActive, toggleSidebar}: SidebarProps) => {
       {/* Menu Sidebar */}
       <div className="pt-2 d-flex flex-column gap-5">
         <div className={`${styles.menu} p-0`}>
-          <p>Daily Use</p>
 
           <Link
             href={dashboardPath}
@@ -104,22 +104,20 @@ const Sidebar = ({ isActive, toggleSidebar}: SidebarProps) => {
             Overview
           </Link>
 
-
           {userRole === "admin" && (
             <Link
               href="/admin/users"
               className={`${styles.itemMenu} ${router.pathname === "/admin/users" ? styles.active : ""}`}
-
             >
               <i className={`${styles.icon} ${styles.icPerson}`}></i>
-              Data Pengguna
+              User Data
             </Link>
           )}
         </div>
 
         <div className={styles.menu}>
           <p>Others</p>
-          <Link href="#" className={styles.itemMenu}>
+          <Link href="/settings" className={styles.itemMenu}>
             <i className={`${styles.icon} ${styles.icSettings}`}></i>
             Settings
           </Link>
@@ -129,6 +127,7 @@ const Sidebar = ({ isActive, toggleSidebar}: SidebarProps) => {
           </a>
         </div>
       </div>
+
     </nav>
   );
 };

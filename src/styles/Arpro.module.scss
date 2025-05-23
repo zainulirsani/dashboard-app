@@ -74,30 +74,38 @@
   height: 120px;
   border-radius: 20px;
   background: linear-gradient(135deg, #8b0000, #b22222);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   color: #fff;
-  transition: all 0.3s ease-in-out;
   padding: 1rem;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25); // bayangan lebih kuat & natural
 
   &__description {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #f0f0f0;
   }
 
   &__number {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #ffdf6b;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); // sedikit lebih kuat
     margin-bottom: 4px;
   }
 
+  &__nominal {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #f0f0f0;
+  }
+
   &:hover {
-    transform: scale(1.03);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px) scale(1.03); // lebih realistis daripada hanya scale
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35); // bayangan saat hover lebih tebal
   }
 }
+
 
 
 .chart {
@@ -148,11 +156,15 @@
     border-radius: 20px;
 
     &__description {
-      font-size: 0.85rem;
+      font-size: 1rem;
     }
 
     &__number {
-      font-size: 16px;
+      font-size: 1.5rem;
+    }
+
+    &__nominal {
+      font-size: 1.2rem;
     }
   }
 }
@@ -173,7 +185,7 @@
   }
 
   .mediumCard {
-    width: 100%;
+    width: 45%;
     height: auto;
     padding: 12px;
     border-radius: 18px;
@@ -183,7 +195,10 @@
     }
 
     &__number {
-      font-size: 15px;
+      font-size: 0.9rem;
+    }
+    &__nominal {
+      font-size: 0.7rem;
     }
   }
 }

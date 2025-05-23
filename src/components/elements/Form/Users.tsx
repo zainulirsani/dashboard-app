@@ -63,105 +63,106 @@ const UserFormModal = ({ showModal, handleCloseModal, handleSubmit, selectedUser
 
     return (
         <div className={`modal fade ${showModal ? "show d-block" : "d-none"}`} tabIndex={-1} role="dialog">
-            <div className="modal-dialog modal-md" role="document">
-                <div className="modal-content">
-                    {/* Modal Header */}
-                    <div className={`modal-header ${selectedUser ? "bg-primary" : "bg-success"} text-white`}>
-                        <h5 className="modal-title fw-bold">
-                            {selectedUser ? "Edit User" : "Tambah User"}
-                        </h5>
-                        <button type="button" className="btn-close btn-close-white" onClick={handleCloseModal}></button>
-                    </div>
+  <div className="modal-dialog modal-md" role="document">
+    <div className="modal-content">
+      {/* Modal Header */}
+      <div className={`modal-header ${selectedUser ? "bg-primary" : "bg-success"} text-white`}>
+        <h5 className="modal-title fw-bold">
+          {selectedUser ? "Edit User" : "Add User"}
+        </h5>
+        <button type="button" className="btn-close btn-close-white" onClick={handleCloseModal}></button>
+      </div>
 
-                    {/* Modal Body */}
-                    <div className="modal-body">
-                        <form id="formUser" onSubmit={handleFormSubmit}>
-                            <div className="mb-3">
-                                <label className="form-label fw-semibold">Nama</label>
-                                <input
-                                    type="text"
-                                    className="form-control border-primary"
-                                    name="name"
-                                    onChange={handleChange}
-                                    value={formData.name}
-                                    required
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label fw-semibold">Email</label>
-                                <input
-                                    type="email"
-                                    className="form-control border-primary"
-                                    name="email"
-                                    onChange={handleChange}
-                                    value={formData.email}
-                                    required
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label fw-semibold">Password</label>
-                                <input
-                                    type="password"
-                                    className="form-control border-primary"
-                                    name="password"
-                                    onChange={handleChange}
-                                    value={formData.password}
-                                    required={!selectedUser || formData.password !== ""}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label fw-semibold">Role</label>
-                                <select
-                                    className="form-select border-primary"
-                                    name="role"
-                                    onChange={handleChange}
-                                    value={formData.role}
-                                    required
-                                >
-                                    <option value="" disabled>Pilih Role</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="manager">Manager</option>
-                                    <option value="kadiv">Kepala Devisi</option>
-                                </select>
-                            </div>
+      {/* Modal Body */}
+      <div className="modal-body">
+        <form id="formUser" onSubmit={handleFormSubmit}>
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Name</label>
+            <input
+              type="text"
+              className="form-control border-primary"
+              name="name"
+              onChange={handleChange}
+              value={formData.name}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Email</label>
+            <input
+              type="email"
+              className="form-control border-primary"
+              name="email"
+              onChange={handleChange}
+              value={formData.email}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Password</label>
+            <input
+              type="password"
+              className="form-control border-primary"
+              name="password"
+              onChange={handleChange}
+              value={formData.password}
+              required={!selectedUser || formData.password !== ""}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Role</label>
+            <select
+              className="form-select border-primary"
+              name="role"
+              onChange={handleChange}
+              value={formData.role}
+              required
+            >
+              <option value="" disabled>Select Role</option>
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+              <option value="kadiv">Head of Division</option>
+            </select>
+          </div>
 
-                            {/* Devisi hanya muncul jika role adalah "kadiv" */}
-                            {formData.role === 'kadiv' && (
-                                <div className="mb-3">
-                                    <label className="form-label fw-semibold">Daftar Perusahaan</label>
-                                    <div className="form-check-container">
-                                        {devisis.map((devisi) => (
-                                            <div key={devisi.id} className="form-check d-flex align-items-center justify-content-between border-bottom py-2">
-                                                <label className="form-check-label mb-0 fw-normal text-muted flex-grow-1">
-                                                    {devisi.nama_perusahaan}
-                                                </label>
-                                                <input
-                                                    type="checkbox"
-                                                    className="form-check-input ms-2"
-                                                    value={devisi.id}
-                                                    onChange={(event) => handleCheckboxChange(event, devisi.id)}
-                                                    checked={formData.devisi.includes(devisi.id)}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Modal Footer */}
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
-                                    Batal
-                                </button>
-                                <button type="submit" className="btn btn-primary">
-                                    Simpan
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+          {/* Division list only appears if role is "kadiv" */}
+          {formData.role === 'kadiv' && (
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Company List</label>
+              <div className="form-check-container">
+                {devisis.map((devisi) => (
+                  <div key={devisi.id} className="form-check d-flex align-items-center justify-content-between border-bottom py-2">
+                    <label className="form-check-label mb-0 fw-normal text-muted flex-grow-1">
+                      {devisi.nama_perusahaan}
+                    </label>
+                    <input
+                      type="checkbox"
+                      className="form-check-input ms-2"
+                      value={devisi.id}
+                      onChange={(event) => handleCheckboxChange(event, devisi.id)}
+                      checked={formData.devisi.includes(devisi.id)}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-        </div>
+          )}
+
+          {/* Modal Footer */}
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
     );
 };
 

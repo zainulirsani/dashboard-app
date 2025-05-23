@@ -13,20 +13,21 @@ const DateYearInput: React.FC<DateYearInputProps> = ({
   options
 }) => {
   return (
-    <div style={{ width: '100px' }}>
-      <select
-        className={`${styles.search} form-select`}
-        value={value ?? ''}
-        onChange={(e) => onChange && onChange(parseInt(e.target.value))}
-      >
-        <option value="">Pilih Tahun</option>
-        {options.map((year) => (
-          <option key={year} value={year}>
-            {year}
-          </option>
-        ))}
-      </select>
-    </div>
+    <div className={`${styles.yearSelectWrapper}`}>
+    <select
+      className={`${styles.search} form-select`}
+      value={value ?? ''}
+      onChange={(e) => onChange && onChange(parseInt(e.target.value))}
+    >
+      <option value="">Select Year</option>
+      {options.map((year) => (
+        <option key={year} value={year}>
+          {year}
+        </option>
+      ))}
+    </select>
+  </div>
+  
   );
 };
 

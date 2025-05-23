@@ -1,28 +1,32 @@
 import React, { useEffect, useState } from "react";
-import styles from "@/styles/Approval.module.scss";
+import styles from "@/styles/Arproval.module.scss";
+import { FaRegCalendarAlt } from 'react-icons/fa';
 import LineChart from "@/components/elements/Chart/LineChart";
 import DateRangeInput from "@/components/elements/Daterange/Daterange";
 import dynamic from 'next/dynamic';
 const DataTable = dynamic(() => import('react-data-table-component'), {
     ssr: false,
 });
-import { ApprovalData, TotalHarga, TotalApproved, TotalBelum, TotalDitolak, ApprovalItem, } from "@/types/approval.type";
+import { ArprovalData, TotalHarga, TotalApproved, TotalBelum, TotalDitolak, ArprovalItem, TotalPending, } from "@/types/arproval.type";
 interface Props {
-    data: ApprovalData;
+    data: ArprovalData;
 }
-type Status = "approved" | "pending" | "ditolak" | "belum_diapprove";
-const ApprovalView = ({ data }: Props) => {
-    const statuses: Status[] = ["approved", "pending", "ditolak", "belum_diapprove"];
-    const [selectedChart, setSelectedChart] = useState<'semua' | 'approved' | 'belum approve' | 'ditolak'>('semua');
+type Status = "approved" | "pending" | "rejected" | "not_approved";
+const ArprovalView = ({ data }: Props) => {
+    const statuses: Status[] = ["approved", "pending", "rejected", "not_approved"];
+    const [selectedChart, setSelectedChart] = useState<'all' | 'approved' | 'pending' | 'not approved' | 'rejected'>('all');
+
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
     const [filteredChartData, setFilteredChartData] = useState<TotalHarga[]>(data.total_harga || []);
     const [filteredChartApproved, setFilteredChartApproved] = useState<TotalApproved[]>(data.total_approved);
+    const [filteredChartPending, setFilteredChartPending] = useState<TotalPending[]>(data.total_pending);
     const [filteredChartBelumApprove, setFilteredChartBelumApprove] = useState<TotalBelum[]>(data.total_belum);
     const [filteredChartDitolak, setFilteredChartDitolak] = useState<TotalDitolak[]>(data.total_ditolak);
+
     const [showDateRange, setShowDateRange] = useState(false);
     const [filterText, setFilterText] = useState('');
-    const [filteredItems, setFilteredItems] = useState<ApprovalItem[]>(data.all);
+    const [filteredItems, setFilteredItems] = useState<ArprovalItem[]>(data.all);
     const toggleDateRange = () => {
         setShowDateRange(!showDateRange);
     };
@@ -31,6 +35,25 @@ const ApprovalView = ({ data }: Props) => {
         setStartDate(startDate);
         setEndDate(endDate);
     };
+    useEffect(() => {
+        if (data.total_harga && data.total_harga.length > 0) {
+            // Ambil semua tahun dari data
+            const years = data.total_harga
+                .map(item => new Date(item.date_arproval).getFullYear())
+                .filter(year => !isNaN(year));
+
+            // Cari tahun terbesar
+            const latestYear = Math.max(...years);
+
+            // Set default start dan end date berdasarkan tahun terakhir
+            const defaultStartDate = `${latestYear}-01-01`;
+            const defaultEndDate = `${latestYear}-12-31`;
+
+            setStartDate(defaultStartDate);
+            setEndDate(defaultEndDate);
+        }
+    }, [data.total_harga]);
+
     // Filter data based on selected date range
     useEffect(() => {
         if (startDate && endDate) {
@@ -38,75 +61,88 @@ const ApprovalView = ({ data }: Props) => {
             const end = new Date(endDate);
 
             const filteredData = data.total_harga.filter((item: TotalHarga) => {
-                const approvalDate = new Date(item.date_approval);
-                return approvalDate >= start && approvalDate <= end;
+                const arprovalDate = new Date(item.date_arproval);
+                return arprovalDate >= start && arprovalDate <= end;
             });
 
             const filteredApprovedData = data.total_approved.filter((item: TotalApproved) => {
-                const approvalDate = new Date(item.date_approval);
-                return approvalDate >= start && approvalDate <= end;
+                const arprovalDate = new Date(item.date_arproval);
+                return arprovalDate >= start && arprovalDate <= end;
             });
 
             const filteredBelumApproveData = data.total_belum.filter((item: TotalBelum) => {
-                const approvalDate = new Date(item.date_approval);
-                return approvalDate >= start && approvalDate <= end;
+                const arprovalDate = new Date(item.date_arproval);
+                return arprovalDate >= start && arprovalDate <= end;
+            });
+
+            const filteredPendingData = data.total_pending.filter((item: TotalPending) => {
+                const arprovalDate = new Date(item.date_arproval);
+                return arprovalDate >= start && arprovalDate <= end;
             });
 
             const filteredDitolakData = data.total_ditolak.filter((item: TotalDitolak) => {
-                const approvalDate = new Date(item.date_approval);
-                return approvalDate >= start && approvalDate <= end;
+                const arprovalDate = new Date(item.date_arproval);
+                return arprovalDate >= start && arprovalDate <= end;
             });
 
             setFilteredChartApproved(filteredApprovedData);
             setFilteredChartBelumApprove(filteredBelumApproveData);
             setFilteredChartDitolak(filteredDitolakData);
+            setFilteredChartPending(filteredPendingData);
             // console.log("Filtered data:", filteredData);
             setFilteredChartData(filteredData);
         } else {
             setFilteredChartData(data.total_harga);
             setFilteredChartApproved(data.total_approved);
             setFilteredChartBelumApprove(data.total_belum);
+            setFilteredChartPending(data.total_pending);
             setFilteredChartDitolak(data.total_ditolak);
         }
     }, [startDate, endDate, data]);
 
     const dataForChart = filteredChartData.map((item: TotalHarga, index: number) => ({
-        date_approval: item.date_approval,
+        date_arproval: item.date_arproval,
         total_harga: Number(item.total_harga),
         total_nego: Number(data.total_nego[index]?.total_nego || 0),
     }));
 
     const dataForChartApproved = filteredChartApproved.map((item: TotalApproved, index: number) => ({
-        date_approval: item.date_approval,
+        date_arproval: item.date_arproval,
         total_harga: Number(item.total_harga),
         total_nego: Number(data.total_nego[index]?.total_nego || 0),
     }));
 
+    const dataForChartPending = filteredChartPending.map((item: TotalPending, index: number) => ({
+        date_arproval: item.date_arproval,
+        total_harga: Number(item.total_harga),
+        total_nego: Number(data.total_nego[index]?.total_nego || 0),
+    }))
+
     const dataForChartBelumApprove = filteredChartBelumApprove.map((item: TotalBelum, index: number) => ({
-        date_approval: item.date_approval,
+        date_arproval: item.date_arproval,
         total_harga: Number(item.total_harga),
         total_nego: Number(data.total_nego[index]?.total_nego || 0),
     }));
 
     const dataForChartDitolak = filteredChartDitolak.map((item: TotalDitolak, index: number) => ({
-        date_approval: item.date_approval,
+        date_arproval: item.date_arproval,
         total_harga: Number(item.total_harga),
         total_nego: Number(data.total_nego[index]?.total_nego || 0),
     }));
 
     const getDataForChart = () => {
-        if (selectedChart === 'semua') {
+        if (selectedChart === 'all') {
             return {
-                labels: dataForChart.map(item => item.date_approval),
+                labels: dataForChart.map(item => item.date_arproval),
                 datasets: [
                     {
-                        label: "Total Harga",
+                        label: "Total Price",
                         data: dataForChart.map(item => item.total_harga),
                         borderColor: "rgb(75, 192, 192)",
                         backgroundColor: "rgba(75, 192, 192, 0.2)"
                     },
                     {
-                        label: "Total Nego",
+                        label: "Negotiated Total ",
                         data: dataForChart.map(item => item.total_nego),
                         borderColor: "rgb(255, 99, 132)",
                         backgroundColor: "rgba(255, 99, 132, 0.2)"
@@ -115,52 +151,71 @@ const ApprovalView = ({ data }: Props) => {
             };
         } else if (selectedChart === 'approved') {
             return {
-                labels: dataForChartApproved.map(item => item.date_approval),
+                labels: dataForChartApproved.map(item => item.date_arproval),
                 datasets: [
                     {
-                        label: "Total Approved",
+                        label: "Total Price",
                         data: dataForChartApproved.map(item => item.total_harga),
                         borderColor: "rgb(75, 192, 192)",
                         backgroundColor: "rgba(75, 192, 192, 0.2)"
                     },
                     {
-                        label: "Total Nego",
+                        label: "Negotiated Total",
                         data: dataForChartApproved.map(item => item.total_nego),
                         borderColor: "rgb(255, 99, 132)",
                         backgroundColor: "rgba(255, 99, 132, 0.2)"
                     }
                 ]
             };
-        } else if (selectedChart === 'belum approve') {
+        } else if (selectedChart === 'not approved') {
             return {
-                labels: dataForChartBelumApprove.map(item => item.date_approval),
+                labels: dataForChartBelumApprove.map(item => item.date_arproval),
                 datasets: [
                     {
-                        label: "Total Belum Approve",
+                        label: "Total Price",
                         data: dataForChartBelumApprove.map(item => item.total_harga),
                         borderColor: "rgb(75, 192, 192)",
                         backgroundColor: "rgba(75, 192, 192, 0.2)"
                     },
                     {
-                        label: "Total Nego",
+                        label: "Negotiated Total ",
                         data: dataForChartBelumApprove.map(item => item.total_nego),
                         borderColor: "rgb(255, 99, 132)",
                         backgroundColor: "rgba(255, 99, 132, 0.2)"
                     }
                 ]
             };
-        } else if (selectedChart === 'ditolak') {
+        } else if (selectedChart === 'pending') {
             return {
-                labels: dataForChartDitolak.map(item => item.date_approval),
+                labels: dataForChartPending.map(item => item.date_arproval),
                 datasets: [
                     {
-                        label: "Total Ditolak",
+                        label: "Total Price",
+                        data: dataForChartPending.map(item => item.total_harga),
+                        borderColor: "rgb(75, 192, 192)",
+                        backgroundColor: "rgba(75, 192, 192, 0.2)"
+                    },
+                    {
+                        label: "Negotiated Total ",
+                        data: dataForChartPending.map(item => item.total_nego),
+                        borderColor: "rgb(255, 99, 132)",
+                        backgroundColor: "rgba(255, 99, 132, 0.2)"
+                    }
+                ]
+            };
+        }
+        else if (selectedChart === 'rejected') {
+            return {
+                labels: dataForChartDitolak.map(item => item.date_arproval),
+                datasets: [
+                    {
+                        label: "Total Price",
                         data: dataForChartDitolak.map(item => item.total_harga),
                         borderColor: "rgb(75, 192, 192)",
                         backgroundColor: "rgba(75, 192, 192, 0.2)"
                     },
                     {
-                        label: "Total Nego",
+                        label: "Negotiated Total ",
                         data: dataForChartDitolak.map(item => item.total_nego),
                         borderColor: "rgb(255, 99, 132)",
                         backgroundColor: "rgba(255, 99, 132, 0.2)"
@@ -185,63 +240,74 @@ const ApprovalView = ({ data }: Props) => {
     const totalNegoKeseluruhanBelumApproved = dataForChartBelumApprove.reduce((sum, item) => sum + (item.total_nego || 0), 0);
     const totalSelisihKeseluruhanBelumApproved = totalKeseluruhanBelumApproved - totalNegoKeseluruhanBelumApproved;
 
+    const totalKeseluruhanPending = dataForChartPending.reduce((sum, item) => sum + (item.total_harga || 0), 0);
+    const totalNegoKeseluruhanPending = dataForChartPending.reduce((sum, item) => sum + (item.total_nego || 0), 0);
+    const totalSelisihKeseluruhanPending = totalKeseluruhanPending - totalNegoKeseluruhanPending;
+
     const totalKeseluruhanDitolak = dataForChartDitolak.reduce((sum, item) => sum + (item.total_harga || 0), 0);
     const totalNegoKeseluruhanDitolak = dataForChartDitolak.reduce((sum, item) => sum + (item.total_nego || 0), 0);
     const totalSelisihKeseluruhanDitolak = totalKeseluruhanDitolak - totalNegoKeseluruhanDitolak;
 
     const getStats = () => {
-        if (selectedChart === 'semua') {
+        if (selectedChart === 'all') {
             return [
-                { title: "Total Keseluruhan SO", value: totalKeseluruhanSO, bg: "success" },
-                { title: "Total Nego Keseluruhan SO", value: totalNegoKeseluruhanSO, bg: "warning" },
-                { title: "Total Selisih Keseluruhan SO", value: totalSelisihKeseluruhanSO, bg: "secondary" }
+                { title: "Total Overall SO", value: totalKeseluruhanSO, bg: "success" },
+                { title: "Total Overall SO Negotiated", value: totalNegoKeseluruhanSO, bg: "warning" },
+                { title: "Total Overall SO Difference", value: totalSelisihKeseluruhanSO, bg: "secondary" }
             ];
         } else if (selectedChart === 'approved') {
             return [
-                { title: "Total Keseluruhan SO", value: totalKeseluruhanApproved, bg: "success" },
-                { title: "Total Nego Keseluruhan SO", value: totalNegoKeseluruhanApproved, bg: "warning" },
-                { title: "Total Selisih Keseluruhan SO", value: totalSelisihKeseluruhanApproved, bg: "secondary" }
+                { title: "Total Approved SO", value: totalKeseluruhanApproved, bg: "success" },
+                { title: "Total Approved SO Negotiated", value: totalNegoKeseluruhanApproved, bg: "warning" },
+                { title: "Total Approved SO Difference", value: totalSelisihKeseluruhanApproved, bg: "secondary" }
             ];
-        } else if (selectedChart === 'belum approve') {
+        } else if (selectedChart === 'not approved') {
             return [
-                { title: "Total Keseluruhan SO", value: totalKeseluruhanBelumApproved, bg: "success" },
-                { title: "Total Nego Keseluruhan SO", value: totalNegoKeseluruhanBelumApproved, bg: "warning" },
-                { title: "Total Selisih Keseluruhan SO", value: totalSelisihKeseluruhanBelumApproved, bg: "secondary" }
+                { title: "Total Unapproved SO", value: totalKeseluruhanBelumApproved, bg: "success" },
+                { title: "Total Unapproved SO Negotiated", value: totalNegoKeseluruhanBelumApproved, bg: "warning" },
+                { title: "Total Unapproved SO Difference", value: totalSelisihKeseluruhanBelumApproved, bg: "secondary" }
             ];
-        } else if (selectedChart === 'ditolak') {
+        } else if (selectedChart === 'pending') {
             return [
-                { title: "Total Keseluruhan SO", value: totalKeseluruhanDitolak, bg: "success" },
-                { title: "Total Nego Keseluruhan SO", value: totalNegoKeseluruhanDitolak, bg: "warning" },
-                { title: "Total Selisih Keseluruhan SO", value: totalSelisihKeseluruhanDitolak, bg: "secondary" }
+                { title: "Total Pending SO", value: totalKeseluruhanPending, bg: "success" },
+                { title: "Total Pending SO Negotiated", value: totalNegoKeseluruhanPending, bg: "warning" },
+                { title: "Total Pending SO Difference", value: totalSelisihKeseluruhanPending, bg: "secondary" }
+            ];
+        } else if (selectedChart === 'rejected') {
+            return [
+                { title: "Total Rejected SO", value: totalKeseluruhanDitolak, bg: "success" },
+                { title: "Total Rejected SO Negotiated", value: totalNegoKeseluruhanDitolak, bg: "warning" },
+                { title: "Total Rejected SO Difference", value: totalSelisihKeseluruhanDitolak, bg: "secondary" }
             ];
         }
         return [];
     };
+
     const columns = [
         {
             name: 'No SQ',
-            selector: (row: ApprovalItem) => row.no_sq,
+            selector: (row: ArprovalItem) => row.no_sq,
             sortable: true,
         },
         {
-            name: 'Total Harga',
-            selector: (row: ApprovalItem) => `Rp ${row.total_harga.toLocaleString()}`,
+            name: 'Total Price',
+            selector: (row: ArprovalItem) => `Rp ${row.total_harga.toLocaleString()}`,
             sortable: true,
             right: true,
         },
         {
             name: 'Holding',
-            selector: (row: ApprovalItem) => row.holding,
+            selector: (row: ArprovalItem) => row.holding,
             sortable: true,
         },
         {
-            name: 'Tanggal Approval',
-            selector: (row: ApprovalItem) => row.date_approval,
+            name: 'Arproval Date',
+            selector: (row: ArprovalItem) => row.date_arproval,
             sortable: true,
         },
         {
             name: 'Status',
-            selector: (row: ApprovalItem) => row.status,
+            selector: (row: ArprovalItem) => row.status,
             sortable: true,
         },
     ];
@@ -251,18 +317,19 @@ const ApprovalView = ({ data }: Props) => {
 
     // Hook useEffect untuk memfilter data setiap kali filterText berubah
     useEffect(() => {
-        const filtered = data.all.filter(
-            (item) =>
-                item.no_sq.toLowerCase().includes(filterText.toLowerCase()) ||
-                item.holding.toLowerCase().includes(filterText.toLowerCase()) ||
-                item.status.toLowerCase().includes(filterText.toLowerCase())
-        );
+        const filtered = data.all.filter((item) =>
+            item.no_sq.toLowerCase().includes(filterText.toLowerCase()) ||
+            item.holding.toLowerCase().includes(filterText.toLowerCase()) ||
+            String(item.date_arproval).toLowerCase().includes(filterText.toLowerCase()) ||
+            item.status.toLowerCase().includes(filterText.toLowerCase())
+          );
+          
         setFilteredItems(filtered);
     }, [filterText, data.all]);
     return (
         <section className="p-3">
             <header className={`${styles.header} d-flex justify-content-between`}>
-                <h3 className={`${styles.header__h3} flex-grow-1`}>Approval</h3>
+                <h3 className={`${styles.header__h3} flex-grow-1`}>Arproval</h3>
             </header>
             <div className="row px-1 mb-2 gap-5 justify-content-end">
                 <div style={{ position: 'relative', width: 'auto' }}>
@@ -271,21 +338,19 @@ const ApprovalView = ({ data }: Props) => {
                         onClick={toggleDateRange}
                         style={{ cursor: 'pointer' }}
                     >
+                        <FaRegCalendarAlt style={{ fontSize: '1.2rem' }} /> {/* Ikon kalender */}
                         <span>
-                            Pilih Tanggal:
+                            Date:
                             {startDate && endDate && (
                                 <> {new Date(startDate).toLocaleDateString('id-ID')} s.d. {new Date(endDate).toLocaleDateString('id-ID')}</>
                             )}
                         </span>
                     </div>
-
-
-
                     {showDateRange && (
                         <div className={styles.datePickerWrapper}>
                             <DateRangeInput
                                 onDateChange={handleDateChange}
-                                onDone={() => setShowDateRange(false)} // Tutup saat selesai pilih
+                                onDone={() => setShowDateRange(false)}
                             />
                         </div>
                     )}
@@ -313,16 +378,16 @@ const ApprovalView = ({ data }: Props) => {
                 <div className="d-flex flex-wrap gap-3">
                     <div className={`${styles.statCard} card`}>
                         <div className={styles.statCard__header}>
-                            <h5 className={styles.statCard__header__title}>Statistik</h5>
+                            <h5 className={styles.statCard__header__title}>Statistics</h5>
                         </div>
                         <div className="card-body">
                             <div className="row px-1 mb-2 gap-3 justify-content-center">
-                                <div className="mt-3 d-flex gap-2 justify-content-end">
+                                <div className="mt-3 d-flex gap-2 flex-wrap justify-content-center">
                                     <button
-                                        className={`btn btn-sm ${selectedChart === 'semua' ? 'btn-primary' : 'btn-outline-primary'}`}
-                                        onClick={() => setSelectedChart('semua')}
+                                        className={`btn btn-sm ${selectedChart === 'all' ? 'btn-primary' : 'btn-outline-primary'}`}
+                                        onClick={() => setSelectedChart('all')}
                                     >
-                                        Semua
+                                        All
                                     </button>
                                     <button
                                         className={`btn btn-sm ${selectedChart === 'approved' ? 'btn-success' : 'btn-outline-success'}`}
@@ -331,23 +396,30 @@ const ApprovalView = ({ data }: Props) => {
                                         Approved
                                     </button>
                                     <button
-                                        className={`btn btn-sm ${selectedChart === 'belum approve' ? 'btn-warning' : 'btn-outline-warning'}`}
-                                        onClick={() => setSelectedChart('belum approve')}
+                                        className={`btn btn-sm ${selectedChart === 'pending' ? 'btn-warning' : 'btn-outline-warning'}`}
+                                        onClick={() => setSelectedChart('pending')}
                                     >
-                                        Belum Diapprove
+                                        Pending
                                     </button>
                                     <button
-                                        className={`btn btn-sm ${selectedChart === 'ditolak' ? 'btn-danger' : 'btn-outline-danger'}`}
-                                        onClick={() => setSelectedChart('ditolak')}
+                                        className={`btn btn-sm ${selectedChart === 'rejected' ? 'btn-danger' : 'btn-outline-danger'}`}
+                                        onClick={() => setSelectedChart('rejected')}
                                     >
-                                        Ditolak
+                                        Rejected
+                                    </button>
+                                    <button
+                                        className={`btn btn-sm ${selectedChart === 'not approved' ? 'btn-secondary' : 'btn-outline-secondary'}`}
+                                        onClick={() => setSelectedChart('not approved')}
+                                    >
+                                        Not Approved
                                     </button>
                                 </div>
+
                                 <div className={styles.statChard__chartContainer}>
                                     <LineChart
                                         chartData={getDataForChart()!}
-                                        titleX="Tanggal Approval"
-                                        titleY="Total Harga dan Total Nego"
+                                        titleX="Approval Date"
+                                        titleY="Total Price and Total Negotiated"
                                         isNominal={true}
                                     />
                                 </div>
@@ -363,31 +435,36 @@ const ApprovalView = ({ data }: Props) => {
                     <div className={`${styles.statCard} card mt-3`}>
                         <div className={styles.statCard__header}>
                             <h6 className="mb-0 d-flex justify-content-between align-items-center">
-                                <span className={styles.statCard__header__title}>Data Approval</span>
+                                <span className={styles.statCard__header__title}>Arproval Data</span>
                             </h6>
                         </div>
                         <div className="card-body">
-                            <div className="row px-1 mb-2 justify-content-center" style={{ minWidth: '920px' }}>
+                            <div className="row px-1 mb-2 justify-content-center">
                                 <input
                                     type="text"
-                                    placeholder="Cari berdasarkan No SQ, Holding, atau Status"
+                                    placeholder="Search by SQ Number, Holding, or Status"
                                     className="form-control mb-3"
                                     value={filterText}
                                     onChange={handleFilterChange}
                                 />
 
-                                <DataTable
-                                    title="Daftar Approval"
-                                    columns={columns}
-                                    data={filteredItems}
-                                    pagination
-                                    highlightOnHover
-                                    striped
-                                    responsive
-                                    noHeader
-                                />
+                                {/* Tabel scrollable */}
+                                <div style={{ overflowX: "auto", width: "100%" }}>
+                                    <div style={{ minWidth: "800px" }}>
+                                        <DataTable
+                                            title="Daftar Arproval"
+                                            columns={columns}
+                                            data={filteredItems}
+                                            pagination
+                                            highlightOnHover
+                                            striped
+                                            noHeader
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -396,4 +473,4 @@ const ApprovalView = ({ data }: Props) => {
     );
 };
 
-export default ApprovalView;
+export default ArprovalView;

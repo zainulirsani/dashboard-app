@@ -33,7 +33,7 @@
     top: 100%;
     right: 0;
     z-index: 1000;
-    background: white;
+    background: rgb(255, 255, 255);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
     margin-top: 4px;
@@ -45,7 +45,7 @@
     border-radius: 10px;
     box-sizing: border-box;
     position: relative;
-    background-color: #cacaca;
+    background-color: #fffcfc;
     &__cardHeader {
       border-radius: 12px 12px 0 0;
       padding: 10px;
@@ -119,126 +119,104 @@
     }
   }
   
-  /* ====== RESPONSIVE ====== */
-  @media (min-width: 834px) and (max-width: 900px) {
+
+  @media (max-width: 767px) {
+    // Tampilan untuk Handphone
     .header {
       flex-direction: column;
       align-items: flex-start;
-      gap: 8px;
-
+      gap: 10px;
+  
       &__h3 {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
+        line-height: 1.4;
       }
-
+  
       &__p {
         font-size: 0.9rem;
       }
     }
-
+  
+    .search {
+      width: 100%;
+      font-size: 13px;
+    }
+  
     .mediumCard {
-      width: 40%;
+      width: 45%;
       height: auto;
-      padding: 10px;
-
-      &__cardContent {
-        flex-direction: row; // tetap horizontal
-        align-items: center;
-        justify-content: space-between;
-        gap: 25px;
-
-        &__leftSection {
-          flex-basis: 70%;
-          &__number {
-            font-size: 2rem;
-          }
-        }
-
-        &__rightSection {
-          flex-basis: 30%;
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-
-          &__icon {
-            font-size: 2rem;
-          }
-        }
-      }
-
-      &__description {
-        font-size: 14px;
-        margin-top: 2px;
-      }
-    }
-
-    .card {
-      margin-top: 20px;
-
-      &__cardHeader {
-        font-size: 0.9rem;
-        text-align: center;
-      }
-    }
-  }
-  /* Handphone (≤480px) */
-  @media (max-width: 480px) {
-    .header {
       flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-
-      &__h3 {
-        font-size: 1.1rem;
-      }
-
-      &__p {
-        font-size: 0.9rem;
-      }
-    }
-
-    .mediumCard {
-      width: 40%;
-      height: auto;
-      padding: 10px;
-
+      padding: 1rem;
+  
       &__cardContent {
-        flex-direction: row; // tetap horizontal
-        align-items: center;
-        justify-content: space-between;
-        gap: 25px;
-
-        &__leftSection {
-          flex-basis: 70%;
-          &__number {
-            font-size: 2rem;
-          }
-        }
-
+        flex-direction: column;
+        gap: 10px;
+  
+        &__leftSection,
         &__rightSection {
-          flex-basis: 30%;
-          display: flex;
-          justify-content: flex-end;
+          flex-basis: 100%;
           align-items: center;
-
-          &__icon {
-            font-size: 2rem;
-          }
+          justify-content: center;
+        }
+  
+        &__leftSection__number {
+          font-size: 2rem;
+        }
+  
+        &__rightSection__icon {
+          font-size: 2rem;
         }
       }
-
+  
       &__description {
         font-size: 14px;
-        margin-top: 2px;
-      }
-    }
-
-    .card {
-      margin-top: 20px;
-
-      &__cardHeader {
-        font-size: 0.9rem;
         text-align: center;
       }
     }
   }
-
+  
+  @media (min-width: 768px) and (max-width: 1024px) {
+    // Tampilan untuk Tablet
+    .header {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 16px;
+  
+      &__h3 {
+        font-size: 1.5rem;
+      }
+  
+      &__p {
+        font-size: 1rem;
+      }
+    }
+  
+    .search {
+      width: 100%;
+      max-width: 100%;
+    }
+  
+    .mediumCard {
+      width: 45%;
+      max-width: 300px;
+      height: auto;
+      padding: 1rem;
+  
+      &__cardContent {
+        gap: 15px;
+  
+        &__leftSection__number {
+          font-size: 2.2rem;
+        }
+  
+        &__rightSection__icon {
+          font-size: 2.2rem;
+        }
+      }
+  
+      &__description {
+        font-size: 15px;
+      }
+    }
+  }
+  

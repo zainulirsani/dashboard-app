@@ -135,7 +135,7 @@ const UserView = ({ users, devisis }: { users: UserType[], devisis: PerusahaanTy
         cell: ({ row }) => row.index + 1,
       },
       {
-        header: "Nama",
+        header: "Name",
         accessorKey: "name",
       },
       {
@@ -147,20 +147,20 @@ const UserView = ({ users, devisis }: { users: UserType[], devisis: PerusahaanTy
         accessorKey: "role",
       },
       {
-        header: "Aksi",
+        header: "Action",
         cell: ({ row }) => (
           <div>
             <button
               className="btn btn-primary btn-sm me-2"
               onClick={() => handleOpenModal(row.original)}
             >
-              <FontAwesomeIcon icon={faPen} className="me-1" /> Edit
+              <FontAwesomeIcon icon={faPen} className="me-1" /> Update
             </button>
             <button
               className="btn btn-danger btn-sm"
               onClick={() => handleDelete(row.original.id)}
             >
-              <i className="fas fa-trash-alt me-2"></i> Hapus
+              <i className="fas fa-trash-alt me-2"></i> Delete
             </button>
           </div>
         ),
@@ -177,68 +177,68 @@ const UserView = ({ users, devisis }: { users: UserType[], devisis: PerusahaanTy
 
   return (
     <section className="p-3">
-      <div className="row align-items-end">
-        <header className={`${styles.header} d-flex align-items-center justify-content-between`}>
-          <h3 className={`${styles.header__h3} text-center flex-grow-1`}>Daftar User</h3>
-          <button className="btn btn-success btn-sm" onClick={() => handleOpenModal()}>
-            <i className="fas fa-plus me-1"></i> Tambah User
-          </button>
-        </header>
-
-        {showModal && (
-          <Users
-            showModal={true}
-            selectedUser={selectedUser}
-            handleCloseModal={handleCloseModal}
-            handleSubmit={handleSubmit}
-            devisis={devisis}
+    <div className="row align-items-end">
+      <header className={`${styles.header} d-flex align-items-center justify-content-between`}>
+        <h3 className={`${styles.header__h3} text-center flex-grow-1`}>User List</h3>
+        <button className="btn btn-success btn-sm" onClick={() => handleOpenModal()}>
+          <i className="fas fa-plus me-1"></i> Add User
+        </button>
+      </header>
+  
+      {showModal && (
+        <Users
+          showModal={true}
+          selectedUser={selectedUser}
+          handleCloseModal={handleCloseModal}
+          handleSubmit={handleSubmit}
+          devisis={devisis}
+        />
+      )}
+  
+      <div className="card mt-3">
+        <div className="card-body">
+          <input
+            type="text"
+            className="form-control mb-3 col-md-4"
+            placeholder="Search user name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-        )}
-
-        <div className="card mt-3">
-          <div className="card-body">
-            <input
-              type="text"
-              className="form-control mb-3 col-md-4"
-              placeholder="Cari nama user..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <div className="overflow-x-auto rounded-xl shadow"></div>
-            <table className="table table-bordered table-striped table-hover">
-              <thead className="thead-light">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
+          <div className="overflow-x-auto rounded-xl shadow"></div>
+          <table className="table table-bordered table-striped table-hover">
+            <thead className="thead-light">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
                     ))}
                   </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.length > 0 ? (
-                  table.getRowModel().rows.map((row) => (
-                    <tr key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                      ))}
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={columns.length} className="text-center text-muted">
-                      Tidak ada data pengguna.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={columns.length} className="text-center text-muted">
+                    No user data available.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+  
         </div>
       </div>
-
-    </section >
+    </div>
+  </section>
+  
   );
 };
 

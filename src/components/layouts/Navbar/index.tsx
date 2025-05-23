@@ -3,6 +3,8 @@ import styles from "./navbar.module.css";
 import Image from 'next/image';
 import nookies from 'nookies';
 import Link from 'next/link';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 type NavbarProps = {
   toggleSidebar: () => void;
@@ -11,6 +13,7 @@ type NavbarProps = {
 const Navbar = ({ toggleSidebar }: NavbarProps) => {
   const [userName, setUserName] = useState<string>("");
   const [Profile, setProfile] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,6 +36,8 @@ const Navbar = ({ toggleSidebar }: NavbarProps) => {
         }
       } catch (error) {
         console.error("Gagal mengambil data user", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -54,16 +59,23 @@ const Navbar = ({ toggleSidebar }: NavbarProps) => {
 
         {/* Profil User */}
         <div className={`d-flex align-items-center gap-4 ${styles.userProfile}`}>
-          <span className={styles.userName}>{userName}</span>
-          <Link href="/KelolaAkun">
-            <Image
-              src={`http://127.0.0.1:8000/users/${Profile}`}
-              alt="Photo Profile"
-              className={styles.avatar}
-              width={40}
-              height={40}
-            />
-          </Link>
+          <span className={styles.userName}>
+            {isLoading ? <Skeleton width={100} height={20} /> : userName}
+          </span>
+
+          {isLoading ? (
+            <Skeleton circle={true} height={40} width={40} />
+          ) : (
+            <Link href="/KelolaAkun">
+              <Image
+                src={`http://127.0.0.1:8000/users/${Profile}`}
+                alt="Photo Profile"
+                className={styles.avatar}
+                width={40}
+                height={40}
+              />
+            </Link>
+          )}
         </div>
       </div>
     </nav>

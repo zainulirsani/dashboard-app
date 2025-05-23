@@ -1,6 +1,7 @@
 // ArmaiView.tsx
 import styles from "@/styles/Armail.module.scss";
 import { useEffect, useState } from "react";
+import { FaRegCalendarAlt } from 'react-icons/fa';
 import { ArmailType, CSRType, KerjaSamaType, KerjaPraktikType, NarasumberType, PresentasiType, BulanDataType } from "@/types/armail.type";
 import DateRangeInput from "@/components/elements/Daterange/Daterange";
 import { CalendarAgenda } from "@/components/elements/Calender/CalenderRsuitejs";
@@ -56,7 +57,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
       };
     });
   };
-  
+
   const rawData =
     data?.result?.jumlah?.find((j) => j.tahun.toString() === selectedYear)?.data || [];
   const jumlahPerTahun = normalizeMonthlyData(rawData);
@@ -71,6 +72,25 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
   const [filteredDataTugas, setFilteredDataTugas] = useState<PresentasiType[]>(data.result.Tugas || []);
   const [filteredDataLamaran, setFilteredDataLamaran] = useState<PresentasiType[]>(data.result.Lamaran || []);
   const [filteredDataPenelitian, setFilteredDataPenelitian] = useState<PresentasiType[]>(data.result.Penelitian || []);
+
+  useEffect(() => {
+    if (data.result.Surat && data.result.Surat.length > 0) {
+      // Ambil semua tahun dari data
+      const years = data.result.Surat
+        .map(item => new Date(item.tanggal_awal).getFullYear())
+        .filter(year => !isNaN(year));
+
+      // Cari tahun terbesar
+      const latestYear = Math.max(...years);
+
+      // Set default start dan end date berdasarkan tahun terakhir
+      const defaultStartDate = `${latestYear}-01-01`;
+      const defaultEndDate = `${latestYear}-12-31`;
+
+      setStartDate(defaultStartDate);
+      setEndDate(defaultEndDate);
+    }
+  }, [data.result.Surat]);
 
   useEffect(() => {
     if (startDate && endDate) {
@@ -208,12 +228,12 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
 
   const columns = [
     {
-      name: "Bulan",
+      name: "Month",
       selector: (row: BulanDataType) => row.bulan,
       sortable: true,
     },
     {
-      name: "Undangan",
+      name: "Invitation",
       selector: (row: BulanDataType) => row.Undangan,
       sortable: true,
       right: true,
@@ -231,47 +251,48 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
       right: true,
     },
     {
-      name: "Narasumber",
+      name: "Speaker",
       selector: (row: BulanDataType) => row.Narasumber,
       sortable: true,
       right: true,
     },
     {
-      name: "Presentasi",
+      name: "Presentation",
       selector: (row: BulanDataType) => row.Presentasi,
       sortable: true,
       right: true,
     },
     {
-      name: "Kerja Praktik",
+      name: "Internship",
       selector: (row: BulanDataType) => row.KerjaPraktik,
       sortable: true,
       right: true,
     },
     {
-      name: "Kerja Sama",
+      name: "Collaboration",
       selector: (row: BulanDataType) => row.KerjaSama,
       sortable: true,
       right: true,
     },
     {
-      name: "Penelitian",
+      name: "Research",
       selector: (row: BulanDataType) => row.Penelitian,
       sortable: true,
       right: true,
     },
     {
-      name: "Tugas",
+      name: "Assignment",
       selector: (row: BulanDataType) => row.Tugas,
       sortable: true,
       right: true,
     },
     {
-      name: "Lamaran",
+      name: "Application",
       selector: (row: BulanDataType) => row.Lamaran,
       sortable: true,
     }
   ];
+
 
   return (
     <section className="p-3">
@@ -285,21 +306,19 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
             onClick={toggleDateRange}
             style={{ cursor: 'pointer' }}
           >
+            <FaRegCalendarAlt style={{ fontSize: '1.2rem' }} /> {/* Ikon kalender */}
             <span>
-              Pilih Tanggal:
+              Date:
               {startDate && endDate && (
                 <> {new Date(startDate).toLocaleDateString('id-ID')} s.d. {new Date(endDate).toLocaleDateString('id-ID')}</>
               )}
             </span>
           </div>
-
-
-
           {showDateRange && (
             <div className={styles.datePickerWrapper}>
               <DateRangeInput
                 onDateChange={handleDateChange}
-                onDone={() => setShowDateRange(false)} // Tutup saat selesai pilih
+                onDone={() => setShowDateRange(false)}
               />
             </div>
           )}
@@ -317,7 +336,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-envelope`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat CSR</p>
+          <p className="description text-center">CSR Letters</p>
         </div>
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
           <div
@@ -330,7 +349,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil-file-edit-alt`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat Kerja Praktek</p>
+          <p className="description text-center">Internship Letters</p>
         </div>
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
           <div
@@ -343,7 +362,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-envelope`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat KerjaSama</p>
+          <p className="description text-center">Cooperation Letters</p>
         </div>
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
           <div
@@ -356,7 +375,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-user-circle`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat Narasumber</p>
+          <p className="description text-center">Speaker Letters</p>
         </div>
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
           <div
@@ -369,7 +388,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-presentation`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat Presentasi</p>
+          <p className="description text-center">Presentation Letters</p>
         </div>
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
           <div
@@ -382,7 +401,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-users-alt`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat Meeting</p>
+          <p className="description text-center">Meeting Letters</p>
         </div>
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
           <div
@@ -395,7 +414,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-envelope-add`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat Undangan</p>
+          <p className="description text-center">Invitation Letters</p>
         </div>
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
           <div
@@ -408,7 +427,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-books icon`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat Knowledge</p>
+          <p className="description text-center">Knowledge Letters</p>
         </div>
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
           <div
@@ -421,7 +440,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-clipboard-notes`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat Tugas</p>
+          <p className="description text-center">Assignment Letters</p>
         </div>
 
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
@@ -435,7 +454,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-envelope-edit`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Surat Lamaran</p>
+          <p className="description text-center">Application Letters</p>
         </div>
 
         <div className={`${styles.smallCard} col-xl-2 col-12 card`}>
@@ -449,7 +468,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
               <i className={`${styles.smallCard__cardContent__icon} uil uil-book-reader`}></i>
             </div>
           </div>
-          <p className="description text-center">Jumlah Penelitian</p>
+          <p className="description text-center">Research</p>
         </div>
       </div>
       <div className="card mb-3">
@@ -460,7 +479,7 @@ const ArmaiView: React.FC<ArmailViewProps> = ({ data }) => {
       </div>
       <div className="card mb-3">
         <div className={`${styles.card__cardHeader} d-flex justify-content-between align-items-center`}>
-          <h6 className="card-title text-start text-white mb-0">Rekap Perbaikan</h6>
+          <h6 className="card-title text-start text-white mb-0">Annual Letter Summary</h6>
           <div className={`${styles.card__cardHeader__date} d-flex align-items-center gap-2`}>
             <DateYearInput
               options={tahunOptions.map(Number)}

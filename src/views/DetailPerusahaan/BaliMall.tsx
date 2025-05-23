@@ -2,6 +2,7 @@ import styles from "@/styles/BaliMall.module.scss";
 import { BalimallType, MerchantItem, OrderByDateItem, OrdersByCategory, StatesItem, } from "@/types/balimall.type";
 import Barchart from "@/components/elements/Chart/Barchart";
 import React, { useEffect, useMemo, useState } from 'react';
+import { FaRegCalendarAlt } from 'react-icons/fa';
 import dynamic from 'next/dynamic';
 const DataTable = dynamic(() => import('react-data-table-component'), {
   ssr: false,
@@ -55,6 +56,25 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
   const [filteredOrderByMerchant, setFilteredOrderByMerchant] = useState<MerchantItem[]>(data.merchant || []);
   const [filteredMerchantData, setFilteredMerchantData] = useState(MergedDataMerchant);
   const [filteredOrderByCategory, setFilteredOrderByCategory] = useState<OrdersByCategory[]>(data.ordersByCategory || []);
+
+  useEffect(() => {
+    if (data.totalOrderByDate && data.totalOrderByDate.length > 0) {
+      // Ambil semua tahun dari data
+      const years = data.totalOrderByDate
+        .map(item => new Date(item.date).getFullYear())
+        .filter(year => !isNaN(year));
+
+      // Cari tahun terbesar
+      const latestYear = Math.max(...years);
+
+      // Set default start dan end date berdasarkan tahun terakhir
+      const defaultStartDate = `${latestYear}-01-01`;
+      const defaultEndDate = `${latestYear}-12-31`;
+
+      setStartDate(defaultStartDate);
+      setEndDate(defaultEndDate);
+    }
+  }, [data.totalOrderByDate]);
 
   useEffect(() => {
     if (startDate && endDate) {
@@ -121,13 +141,18 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
       acc[item.category_name].total_nominal += item.total_nominal;
       return acc;
     }, {});
-    setMergeredDataCategory(
-      Object.entries(groupByCategory).map(([category_name, data]) => ({
+
+    const sortedTop10Category = Object.entries(groupByCategory)
+      .map(([category_name, data]) => ({
         category_name,
         total_orders: data.total,
         total_nominal: data.total_nominal
       }))
-    )
+      .sort((a, b) => b.total_orders - a.total_orders) // Sort descending total_orders
+      .slice(0, 10); // Ambil 10 teratas
+
+    setMergeredDataCategory(sortedTop10Category);
+
     // Group data by merchant
     const groupedByMerchant = allMerchantData.reduce<Record<string, { total: number; total_nominal: number }>>((acc, item) => {
       if (!acc[item.merchant_name]) {
@@ -144,7 +169,12 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
       total_nominal: data.total_nominal
     }));
 
-    setMergedDataMerchant(merchantTableData);
+    // Sort descending by total_orders, lalu ambil 10 teratas
+    const top10ByTotalOrders = merchantTableData
+      .sort((a, b) => b.total_orders - a.total_orders)
+      .slice(0, 10);
+
+    setMergedDataMerchant(top10ByTotalOrders);
 
   }, [filteredOrderByState, filteredOrderByMerchant, filteredOrderByCategory]);
   const merchantColumns = [
@@ -175,61 +205,64 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
 
   const groupOrdersByMonth = (orders: OrderByDateItem[]) => {
     const grouped: Record<string, { month: string, total_orders: number, total_nominal: number }> = {};
-  
+
     orders.forEach((order) => {
-      const month = dayjs(order.date).format('YYYY-MM');
-      if (!grouped[month]) {
-        grouped[month] = {
-          month,
+      const monthKey = dayjs(order.date).format('YYYY-MM'); // Key tetap YYYY-MM untuk pengelompokan
+      const monthLabel = dayjs(order.date).format('MMMM YYYY'); // Label yang ditampilkan
+
+      if (!grouped[monthKey]) {
+        grouped[monthKey] = {
+          month: monthLabel, // Gunakan label nama bulan dan tahun
           total_orders: 0,
           total_nominal: 0,
         };
       }
-  
-      grouped[month].total_orders += order.total_orders;
-      grouped[month].total_nominal += order.total_nominal;
+
+      grouped[monthKey].total_orders += order.total_orders;
+      grouped[monthKey].total_nominal += order.total_nominal;
     });
-  
+
     return Object.values(grouped);
   };
   const groupedOrderByMonth = useMemo(() => {
     return groupOrdersByMonth(filteredOrderByDate);
   }, [filteredOrderByDate]);
-  
+
   return (
     <section className="p-3">
       <header className={`${styles.header} d-flex justify-content-between`}>
         <h3 className={`${styles.header__h3} flex-grow-1`}>Bali Mall</h3>
       </header>
       <div className="row px-1 mb-2 gap-5 justify-content-end">
-        <div style={{ position: 'relative', width: 'auto' }}>
-          <div
-            className={`${styles.search} d-flex align-items-center justify-content-end gap-2`}
-            onClick={toggleDateRange}
-            style={{ cursor: 'pointer' }}
-          >
-            <span>
-              Pilih Tanggal:
-              {startDate && endDate && (
-                <> {new Date(startDate).toLocaleDateString('id-ID')} s.d. {new Date(endDate).toLocaleDateString('id-ID')}</>
-              )}
-            </span>
-          </div>
-          {showDateRange && (
-            <div className={styles.datePickerWrapper}>
-              <DateRangeInput
-                onDateChange={handleDateChange}
-                onDone={() => setShowDateRange(false)} // Tutup saat selesai pilih
-              />
+                <div style={{ position: 'relative', width: 'auto' }}>
+                    <div
+                        className={`${styles.search} d-flex align-items-center justify-content-end gap-2`}
+                        onClick={toggleDateRange}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <FaRegCalendarAlt style={{ fontSize: '1.2rem' }} /> {/* Ikon kalender */}
+                        <span>
+                            Date:
+                            {startDate && endDate && (
+                                <> {new Date(startDate).toLocaleDateString('id-ID')} s.d. {new Date(endDate).toLocaleDateString('id-ID')}</>
+                            )}
+                        </span>
+                    </div>
+                    {showDateRange && (
+                        <div className={styles.datePickerWrapper}>
+                            <DateRangeInput
+                                onDateChange={handleDateChange}
+                                onDone={() => setShowDateRange(false)}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
-          )}
-        </div>
-      </div>
       <div className="row px-1 gap-4 justify-content-center mb-3">
         <div className={`${styles.cardLarge} col-xl-4 col-12 card shadow-card`}>
           <div className="card-header d-flex align-items-center justify-content-between">
             <i className={`${styles.cardLarge__iconStyle} fas fa-coins`}></i>
-            <h3 className={styles.cardLarge__description}>Total Transaksi Berhasil</h3>
+            <h3 className={styles.cardLarge__description}>Successful Transactions</h3>
           </div>
           <div className="card-body d-flex align-items-center justify-content-center">
             <h3 className={styles.cardLarge__transactionValue}>
@@ -241,13 +274,12 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
         <div className={`${styles.cardLarge} col-xl-4 col-12 card shadow-card`}>
           <div className="card-header d-flex align-items-center justify-content-between">
             <i className={`${styles.cardLarge__iconStyle} fas fa-money-bill`}></i>
-            <h3 className={styles.cardLarge__description}>Nominal Transaksi</h3>
+            <h3 className={styles.cardLarge__description}>Transaction Amount</h3>
           </div>
           <div className="card-body d-flex align-items-center justify-content-center">
             <h3 className={styles.cardLarge__transactionValue}>
               {formatRupiah(totalNominal)}
             </h3>
-
           </div>
         </div>
       </div>
@@ -256,7 +288,7 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
         <div className="col-xl-6 col-lg-6 col-md-12">
           <div className={`${styles.customCard} card`}>
             <div className={styles.customCard__cardHeader}>
-              <h6 className="mb-0">Total Transaksi per Cabang</h6>
+              <h6 className="mb-0">Total Transactions per Branch</h6>
             </div>
             <div className={`${styles.customCard__cardBody} collapse show`} style={{ height: "485px" }}>
               <div
@@ -273,7 +305,7 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
                   className={`btn btn-sm ${!showTotalChart ? 'btn-primary' : 'btn-outline-primary'} rounded-pill px-3`}
                   onClick={() => setShowTotalChart(false)}
                 >
-                  Nominal
+                  Amount
                 </button>
               </div>
 
@@ -281,34 +313,34 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
                 {showTotalChart ? (
                   <Barchart
                     chartData={{
-                      labels: mergedDataCity.map((item) => item.city || "Tidak diketahui"),
+                      labels: mergedDataCity.map((item) => item.city || "Unknown"),
                       datasets: [
                         {
-                          label: "Total Order per Kota",
-                          data: mergedDataCity.map((item) => item.total), // Tipe pasti: number[]
+                          label: "Total Orders per City",
+                          data: mergedDataCity.map((item) => item.total),
                           backgroundColor: "#10b981",
                         },
                       ],
                     }}
                     valueType="number"
-                    titleX="Kota"
-                    titleY="Total Order"
+                    titleX="City"
+                    titleY="Total Orders"
                   />
                 ) : (
                   <Barchart
                     chartData={{
-                      labels: mergedDataCity.map((item) => item.city || "Tidak diketahui"),
+                      labels: mergedDataCity.map((item) => item.city || "Unknown"),
                       datasets: [
                         {
-                          label: "Nominal Order per Kota",
-                          data: mergedDataCity.map((item) => item.total_nominal), // Tipe pasti: number[]
+                          label: "Order Amount per City",
+                          data: mergedDataCity.map((item) => item.total_nominal),
                           backgroundColor: "#10b981",
                         },
                       ],
                     }}
                     valueType="currency"
-                    titleX="Kota"
-                    titleY="Nominal Order"
+                    titleX="City"
+                    titleY="Order Amount"
                   />
                 )}
               </div>
@@ -320,7 +352,7 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
           <div className={`${styles.customCard} card`}>
             <div className={styles.customCard__cardHeader}>
               <h6 className="mb-0 d-flex justify-content-between align-items-center">
-                <span>Total dan Nominal Transaksi Per Merchant</span>
+                <span>Total and Amount of Transactions per Merchant</span>
               </h6>
             </div>
 
@@ -340,69 +372,69 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
                     className={`btn btn-sm ${!showTotalMerchant ? 'btn-primary' : 'btn-outline-primary'} rounded-pill px-3`}
                     onClick={() => setShowTotalMerchant(false)}
                   >
-                    Nominal
+                    Amount
                   </button>
                 </div>
                 <button
                   className={`btn btn-sm ms-auto ${showDetail ? 'btn-secondary' : 'btn-outline-secondary'} rounded-pill px-3`}
                   onClick={() => setShowDetail(prev => !prev)}
                 >
-                  {showDetail ? 'Sembunyikan Detail' : 'Tampilkan Detail'}
+                  {showDetail ? 'Hide Details' : 'Show Details'}
                 </button>
               </div>
-
 
               <div className={styles.customCard__chartContainer}>
                 {showTotalMerchant ? (
                   <Barchart
                     chartData={{
-                      labels: MergedDataMerchant.map((item) => item.merchant_name || "Tidak diketahui"),
+                      labels: MergedDataMerchant.map((item) => item.merchant_name || "Unknown"),
                       datasets: [
                         {
-                          label: "Total Order per Merchant",
-                          data: MergedDataMerchant.map((item) => item.total_orders), // Tipe pasti: number[]
+                          label: "Total Orders per Merchant",
+                          data: MergedDataMerchant.map((item) => item.total_orders),
                           backgroundColor: "#10b981",
                         },
                       ],
                     }}
                     valueType="number"
                     titleX="Merchant"
-                    titleY="Total Order"
+                    titleY="Total Orders"
                   />
                 ) : (
                   <Barchart
                     chartData={{
-                      labels: MergedDataMerchant.map((item) => item.merchant_name || "Tidak diketahui"),
+                      labels: MergedDataMerchant.map((item) => item.merchant_name || "Unknown"),
                       datasets: [
                         {
-                          label: "Nominal Order per Kota",
-                          data: MergedDataMerchant.map((item) => item.total_nominal), // Tipe pasti: number[]
+                          label: "Order Amount per Merchant",
+                          data: MergedDataMerchant.map((item) => item.total_nominal),
                           backgroundColor: "#10b981",
                         },
                       ],
                     }}
                     valueType="currency"
-                    titleX="Kota"
-                    titleY="Nominal Order"
+                    titleX="Merchant"
+                    titleY="Order Amount"
                   />
                 )}
               </div>
             </div>
           </div>
         </div>
+
         {showDetail ? (
           <div className="col-xl-12 col-lg-12 col-md-12">
             <div className={`${styles.customCard} card`}>
               <div className={styles.customCard__cardHeader}>
                 <h6 className="mb-0 d-flex justify-content-between align-items-center">
-                  <span>Detail Transaksi Per Merchant</span>
+                  <span>Transaction Details per Merchant</span>
                 </h6>
               </div>
               <div className="card-body">
                 <div>
                   <input
                     type="text"
-                    placeholder="Cari merchant..."
+                    placeholder="Search merchant..."
                     className="form-control mb-3"
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
@@ -417,18 +449,17 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
                     responsive
                   />
                 </div>
-
               </div>
             </div>
           </div>
         ) : null}
-
       </div>
+
       <div className="row g-4 mt-2">
         <div className="col-xl-6 col-lg-6 col-md-12">
           <div className={`${styles.customCard} card`}>
             <div className={styles.customCard__cardHeader}>
-              <h6 className="mb-0">Total Produk Terjual Berdasarkan Kategori</h6>
+              <h6 className="mb-0">Total Products Sold by Category</h6>
             </div>
             <div className={`${styles.customCard__cardBody} collapse show`}>
               <Barchart
@@ -436,15 +467,15 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
                   labels: mergeredDataCategory.map((item) => item.category_name),
                   datasets: [
                     {
-                      label: `Total Order Tahun`,
+                      label: `Total Orders This Year`,
                       data: mergeredDataCategory.map((item) => item.total_orders ?? 0),
                       backgroundColor: "#10b981",
                     },
                   ],
                 }}
                 valueType="number"
-                titleX="Kategori"
-                titleY="Total Order"
+                titleX="Category"
+                titleY="Total Orders"
               />
             </div>
           </div>
@@ -453,7 +484,7 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
         <div className="col-xl-6 col-lg-6 col-md-12">
           <div className={`${styles.customCard} card`}>
             <div className={styles.customCard__cardHeader}>
-              <h6 className="mb-0">Nominal Transaksi Berdasarkan Kategori</h6>
+              <h6 className="mb-0">Transaction Amount by Category</h6>
             </div>
             <div className={`${styles.customCard__cardBody} collapse show`}>
               <Barchart
@@ -461,27 +492,27 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
                   labels: mergeredDataCategory.map((item) => item.category_name),
                   datasets: [
                     {
-                      label: `Total Order Tahun `,
+                      label: `Total Orders This Year`,
                       data: mergeredDataCategory.map((item) => item.total_nominal ?? 0),
                       backgroundColor: "#10b981",
                     },
                   ],
                 }}
                 valueType="currency"
-                titleX="Kategori"
-                titleY="Nominal Order"
+                titleX="Category"
+                titleY="Transaction Amount"
               />
-
             </div>
           </div>
         </div>
       </div>
 
+
       <div className="row g-4 mt-2">
         <div className="col-xl-12">
           <div className={`${styles.customCard} card`}>
             <div className={styles.customCard__cardHeader}>
-              <h6 className="mb-0">Jumlah Transaksi per Bulan</h6>
+              <h6 className="mb-0">Total Transactions per Month</h6>
             </div>
             <div className={`${styles.customCard__cardBody} collapse show`} style={{ height: "300px" }}>
               <LineChartCurved
@@ -489,15 +520,15 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
                   labels: groupedOrderByMonth.map((item) => item.month),
                   datasets: [
                     {
-                      label: `Jumlah Transaksi Tahun `,
+                      label: `Total Transactions in the Year`,
                       data: groupedOrderByMonth.map((item) => item.total_orders),
                       borderColor: "rgb(75, 192, 192)",
                       backgroundColor: "rgba(75, 192, 192, 0.2)",
                     },
                   ],
                 }}
-                titleX="Bulan"
-                titleY="Total Transaksi"
+                titleX="Month"
+                titleY="Total Transactions"
               />
             </div>
           </div>
@@ -508,8 +539,7 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
         <div className="col-xl-12">
           <div className={`${styles.customCard} card`}>
             <div className={styles.customCard__cardHeader}>
-              <h6 className="mb-0">Nominal Transaksi per Bulan</h6>
-
+              <h6 className="mb-0">Transaction Amount per Month</h6>
             </div>
             <div className={`${styles.customCard__cardBody} collapse show`} style={{ height: "300px" }}>
               <LineChartCurved
@@ -517,20 +547,22 @@ const BaliMallView: React.FC<BaliMallViewProps> = ({ data }) => {
                   labels: groupedOrderByMonth.map((item) => item.month),
                   datasets: [
                     {
-                      label: `Nominal Transaksi Tahun `,
+                      label: `Transaction Amount in the Year`,
                       data: groupedOrderByMonth.map((item) => item.total_nominal),
                       borderColor: "#800020",
                       backgroundColor: "rgba(255, 99, 132, 0.2)",
                     },
                   ],
                 }}
-                titleX="Bulan"
-                titleY="Nominal Transaksi"
+                titleX="Month"
+                titleY="Transaction Amount"
+                isNominal={true}
               />
             </div>
           </div>
         </div>
       </div>
+
     </section>
   );
 };

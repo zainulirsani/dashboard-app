@@ -24,7 +24,7 @@
   padding: 0 20px;
   color: #828ea5;
   border-radius: 100px;
-  background-color: #efeff9;
+  background-color: #ffffff;
   box-sizing: border-box;
   border: #787676 solid 2px;
 }
@@ -146,5 +146,130 @@
   .chartContainer {
     height: 300px;
     position: relative;
+  }
+}
+
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    &__h3 {
+      line-height: 36px;
+      font-size: 20px;
+    }
+
+    &__p {
+      font-size: 14px;
+    }
+  }
+
+  .search {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .largeCard {
+    width: 46%;
+    height: auto;
+    max-height: 150px;
+    padding: 10px;
+
+    &__content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+
+      &__leftSection {
+        text-align: left;
+        font-size: clamp(1.5rem, 5vw, 3rem);
+
+        &__number {
+          font-size: clamp(1rem, 3vw, 2rem);
+        }
+      }
+
+      &__rightSection {
+        justify-content: flex-start;
+        font-size: clamp(1.2rem, 3vw, 2rem);
+      }
+    }
+
+    &__description {
+      font-size: clamp(0.75rem, 1vw, 1rem);
+    }
+  }
+
+  .customCard {
+    &__cardBody {
+      padding: 16px;
+    }
+
+    .chartContainer {
+      height: 250px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    &__h3 {
+      font-size: 18px;
+    }
+
+    &__p {
+      font-size: 13px;
+    }
+  }
+
+  .search {
+    height: 36px;
+    font-size: 13px;
+    padding: 0 16px;
+  }
+
+  .largeCard {
+    padding: 12px;
+
+    &__content {
+      gap: 8px;
+
+      &__leftSection {
+        font-size: clamp(1.2rem, 4vw, 2.5rem);
+      }
+
+      &__rightSection {
+        font-size: clamp(1rem, 3vw, 1.5rem);
+      }
+    }
+
+    &__description {
+      font-size: 0.75rem;
+    }
+  }
+
+  .customCard {
+    &__cardHeader {
+      font-size: 14px;
+      padding: 10px 12px;
+    }
+
+    &__toggleCard {
+      width: 26px;
+      height: 26px;
+
+      i {
+        font-size: 12px;
+      }
+    }
+
+    &__cardBody {
+      padding: 14px;
+    }
+
+    .chartContainer {
+      height: 220px;
+    }
   }
 }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
+import styles from "./login.module.scss"
 
 // Types
 type LoginUserProps = {
@@ -49,18 +50,18 @@ const LoginViews: React.FC = () => {
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
-  
+
     try {
       const response = await loginUser({ email, password });
       const data: LoginResponse = await response.json();
-  
+
       if (response.ok && data.meta.code === 200) {
         // Simpan token ke cookies
         Cookies.set("access_token", data.result.access_token, { expires: 7 });
-  
+
         // Ambil role user
         const userRole = data.result.user.role.toLowerCase();
-  
+
         // Tentukan tujuan redirect berdasarkan role
         let redirectPath = "/dashboard"; // Default jika role tidak dikenali
         if (userRole === "manager") {
@@ -70,23 +71,23 @@ const LoginViews: React.FC = () => {
         } else if (userRole === "kadiv") {
           redirectPath = "/kadiv";
         }
-  
+
         // Tampilkan pesan sukses
         Swal.fire({
           icon: "success",
-          title: "Login Berhasil",
-          text: "Anda akan dialihkan ke dashboard.",
+          title: "Login Successful",
+          text: "You will be redirected to the dashboard.",
           timer: 2000,
           showConfirmButton: false,
         });
-  
+
         // Redirect ke halaman sesuai role
         setTimeout(() => {
           router.push(redirectPath);
         }, 2000);
       } else {
         // Menampilkan alert error dengan SweetAlert2
-        const errorMessage = data.meta.message || "Login gagal, periksa kembali kredensial Anda.";
+        const errorMessage = data.meta.message || "Login failed, please check your credentials.";
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -95,18 +96,18 @@ const LoginViews: React.FC = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-  
+
       Swal.fire({
         icon: "error",
-        title: "Login Gagal",
-        text: error instanceof Error ? error.message : "Terjadi kesalahan.",
+        title: "Login Failed",
+        text: error instanceof Error ? error.message : "An error occurred.",
       });
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
+
 
   const loginUser = async ({ email, password }: LoginUserProps): Promise<Response> => {
     try {
@@ -122,88 +123,76 @@ const LoginViews: React.FC = () => {
   };
 
   return (
-    <section className="vh-100" style={{ backgroundColor: "#ffffff" }}>
+    <section className={`${styles.loginSection}`}>
       <div className="container h-100">
-        <div className="row d-flex justify-content-center align-items-center h-100">
-          <div className="col col-xl-10">
-            <div className="card" style={{ borderRadius: "1rem" }}>
+        <div className="row justify-content-center align-items-center h-100">
+          <div className="col-xl-10">
+            <div className={`${styles.cardModern}`}>
               <div className="row g-0">
-                <div className="col-md-6 col-lg-5 d-none d-md-block">
+                <div className="col-md-6 d-none d-md-block">
                   <Image
                     src="/images/login.svg"
                     alt="form login"
                     width={500}
                     height={500}
-                    className="img-fluid mt-5"
-                    style={{ borderRadius: "1rem 0 0 1rem" }}
+                    className={`${styles.image} img-fluid`}
+                    priority
                   />
                 </div>
-                <div className="col-md-6 col-lg-7 d-flex align-items-center">
-                  <div className="card-body p-4 p-lg-5 text-black">
+                <div className="col-md-6 d-flex align-items-center">
+                  <div className="card-body p-4 p-lg-5">
                     <form onSubmit={handleLogin}>
-                      <div className="d-flex align-items-center mb-3 pb-1">
-                        <Image src="/images/images.png" alt="Logo" width={150} height={50} />
+                      <div className="text-center mb-4">
+                        <Image src="/images/images.png" alt="Logo" width={120} height={40} />
+                        <h4 className="mt-3">Sign in to your account</h4>
                       </div>
-                      <header>
-                        <h3 className="mt-3" style={{ letterSpacing: "1px" }}>
-                          Masuk ke akun Anda
-                        </h3>
-                      </header>
-                      <div className="form-outline mb-4">
-                        <div className="mb-3">
-                          <label htmlFor="editUsername" className="form-label">
-                            Email
-                          </label>
+                      <div className="form-group mb-3">
+                        <label>Email</label>
+                        <input
+                          type="email"
+                          className="form-control"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="form-group mb-3">
+                        <label>Password</label>
+                        <div className="input-group">
                           <input
-                            type="email"
+                            type={showPassword ? "text" : "password"}
                             className="form-control"
-                            id="editUsername"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                           />
-                        </div>
-                        <div className="mb-3 position-relative">
-                          <label htmlFor="editPassword" className="form-label">
-                            Kata Sandi
-                          </label>
-                          <div className="input-group">
-                            <input
-                              type={showPassword ? "text" : "password"}
-                              className="form-control"
-                              id="editPassword"
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                              required
-                            />
-                            <button
-                              type="button"
-                              className="btn btn-outline-secondary toggle-password"
-                              onClick={togglePasswordVisibility}
-                            >
-                              <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`} id="passwordIcon"></i>
-                            </button>
-                          </div>
+                          <button type="button" className="btn btn-outline-secondary" onClick={togglePasswordVisibility} >
+                            <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                          </button>
                         </div>
                       </div>
-                      <div className="pt-1 mb-4">
-                        <button
-                          type="submit"
-                          className="btn btn-primary btn-lg btn-block"
-                          disabled={loading}
-                        >
-                          {loading ? "Memproses..." : "Login"}
+                      <div className="d-grid">
+                        <button type="submit" className="btn btn-primary d-flex align-items-center gap-2" disabled={loading}>
+                          {loading ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              Processing...
+                            </>
+                          ) : (
+                            "Login"
+                          )}
                         </button>
+
                       </div>
                     </form>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
+          </div >
+        </div >
+      </div >
+    </section >
   );
 };
 

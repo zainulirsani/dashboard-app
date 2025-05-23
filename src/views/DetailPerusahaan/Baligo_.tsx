@@ -1,10 +1,11 @@
 import styles from "@/styles/baligo.module.scss";
 import { baligoType, detail, KurirType, PengirimanItem, PengirimanSelesai, revenue, UserType } from "@/types/baligo.type";
+import DateRangeInput from '@/components/elements/Daterange/Daterange';
 import { useEffect, useState } from 'react';
+import { FaRegCalendarAlt } from 'react-icons/fa';
 import { DonutChartCenterText } from "@/components/elements/Chart/donuteChart";
 import LineChart from "@/components/elements/Chart/LineChart";
 import dynamic from 'next/dynamic';
-import MonthRange from "@/components/elements/Daterange/Monthrange";
 const DataTable = dynamic(() => import('react-data-table-component'), {
     ssr: false,
 });
@@ -253,11 +254,24 @@ const BaligoView = ({ data }: { data: baligoType }) => {
                         onClick={toggleDateRange}
                         style={{ cursor: 'pointer' }}
                     >
-                         <MonthRange  onChange={handleDateChange} />
+                        <FaRegCalendarAlt style={{ fontSize: '1.2rem' }} /> {/* Ikon kalender */}
+                        <span>
+                            Date:
+                            {startDate && endDate && (
+                                <> {new Date(startDate).toLocaleDateString('id-ID')} s.d. {new Date(endDate).toLocaleDateString('id-ID')}</>
+                            )}
+                        </span>
                     </div>
+                    {showDateRange && (
+                        <div className={styles.datePickerWrapper}>
+                            <DateRangeInput
+                                onDateChange={handleDateChange}
+                                onDone={() => setShowDateRange(false)}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
-           
             <div className="row px-1 gap-4 justify-content-center mb-3">
                 <div className={`${styles.largeCard} col-xl-2 col-12 card`}>
                     <div

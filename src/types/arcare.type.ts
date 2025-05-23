@@ -15,7 +15,7 @@ export interface Ticket  {
 // Tipe untuk data teknisi dalam assigment
 export interface TeknisiAssignment  {
   nama_teknisi: string;
-  status: string;
+  total: number;
 };
 
 // Tipe untuk setiap tanggal dalam assigment

@@ -73,7 +73,7 @@ const LineChart: React.FC<LineChartProps> = ({ chartData, titleX, titleY, isNomi
                   if (isNominal) {
                     return `Rp ${value.toLocaleString("id-ID")}`;
                   }
-                  return`Total ${value.toLocaleString("id-ID")}`; // Just return the number for non-nominal data
+                  return `Value: ${value.toLocaleString("id-ID")}`; // Just return the number for non-nominal data
                 },
               },
             },
@@ -97,8 +97,26 @@ const LineChart: React.FC<LineChartProps> = ({ chartData, titleX, titleY, isNomi
               },
               grid: { color: "rgba(200, 200, 200, 0.2)" },
               beginAtZero: true,
+              ticks: {
+                callback: function (value: string | number) {
+                  const numericValue = typeof value === 'string' ? parseFloat(value) : value;
+
+                  // Deteksi layar mobile
+                  const isMobile = window.innerWidth < 768;
+
+                  if (isMobile) {
+                    if (numericValue >= 1_000_000_000) return (numericValue / 1_000_000_000).toFixed(0) + 'M'; // Miliar jadi "M"
+                    if (numericValue >= 1_000_000) return (numericValue / 1_000_000).toFixed(0) + 'jt';       // Juta jadi "jt"
+                    if (numericValue >= 1_000) return (numericValue / 1_000).toFixed(0) + 'rb';               // Ribu jadi "rb"
+                    return numericValue;
+                  } else {
+                    return numericValue.toLocaleString("id-ID");
+                  }
+                },
+              },
             },
           },
+
           animation: {
             duration: 1500,
             easing: "easeInOutQuart",
@@ -114,10 +132,11 @@ const LineChart: React.FC<LineChartProps> = ({ chartData, titleX, titleY, isNomi
     <div
       style={{
         width: "100%",
-        maxWidth: "1000px",
         margin: "0 auto",
-        height: "100%", // fleksibel
+        height: "100%",
         padding: "0 10px",
+        overflowX: "hidden",
+        position: "relative",
       }}
     >
       {chartData.labels.length === 0 || chartData.datasets.length === 0 ? (
@@ -135,13 +154,39 @@ const LineChart: React.FC<LineChartProps> = ({ chartData, titleX, titleY, isNomi
           Data Pada Rentang Tanggal Yang Dipilih Kosong
         </div>
       ) : (
-        <div style={{ height: "400px", width: "100%" }}>
-          <canvas ref={chartRef} />
+        <div
+          style={{
+            width: "100%",
+            height: "400px",
+            overflowX: "auto",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+          onWheel={(e) => {
+            const container = e.currentTarget;
+            container.scrollLeft += e.deltaY;
+          }}
+          className="hide-scrollbar"
+        >
+          <div
+            style={{
+              minWidth: "100%", // minimal selebar layar
+              width: chartData.labels.length * 50 + "px", // tetap fleksibel bila label banyak
+              height: "100%",
+            }}
+          >
+            <canvas ref={chartRef} />
+          </div>
         </div>
       )}
     </div>
   );
   
+  
+  
+  
+
 };
 
 export default LineChart;

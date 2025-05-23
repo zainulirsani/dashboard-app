@@ -1,6 +1,11 @@
-.error{
+.error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); // pusatkan elemen
     width: 70vw;
-    height: 70vh;
+    max-width: 800px;
+    height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,7 +13,29 @@
     color: #161618;
     font-size: 1.5rem;
     font-weight: 800;
-    &__image{
-        width: 30%;
+    text-align: center;
+  
+    &__image {
+      width: 30%;
+      max-width: 300px;
+      height: auto;
     }
-};
+  
+    @media (max-width: 768px) {
+      width: 90vw;
+      font-size: 1.1rem;
+  
+      &__image {
+        width: 60%;
+      }
+    }
+  
+    @media (max-width: 480px) {
+      font-size: 1rem;
+  
+      &__image {
+        width: 80%;
+      }
+    }
+  }
+  
